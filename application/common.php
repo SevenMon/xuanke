@@ -24,3 +24,19 @@ function randstr($length = 8){
     }
     return $password;
 }
+
+function timetostr($start_time,$end_time){
+
+    $value['class_day'] = date('m月d日',$start_time);
+    $value['class_week'] = getTimeWeek($start_time);
+    $value['class_start_time'] = date('H:i',$start_time);
+    $value['class_end_time'] = date('H:i',$end_time);
+    $value['class_real_time'] = $value['class_day'].' '.$value['class_week'].' '.$value['class_start_time'].'~'.$value['class_end_time'];
+    return $value;
+}
+
+function getTimeWeek($time, $i = 0) {
+    $weekarray = array("一", "二", "三", "四", "五", "六", "日");
+    $oneD = 24 * 60 * 60;
+    return "星期" . $weekarray[date("w", $time + $oneD * $i)];
+}

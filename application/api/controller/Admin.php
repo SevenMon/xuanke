@@ -63,20 +63,21 @@ class Admin extends Controller
                 'edu_uid' => $edu_admin_info['uid'],
                 'token' => $token
             );
-            $db->name('admin')->insertGetId($data);
+            $uid = $db->name('admin')->insertGetId($data);
         }else{
             $data = array(
                 'token' => $token
             );
             $db->name('admin')->where('edu_uid','=',$edu_admin_info['uid'])->update($data);
-            $admin_info['id'];
+            $uid = $admin_info['id'];
         }
         return json(array(
             'status' => 1,
             'msg' => '登录成功',
             'data' => array(
                 'token' => $token,
-                'edu_admin_info' => $edu_admin_info
+                'edu_admin_info' => $edu_admin_info,
+                'uid' => $uid,
             )
         ));
     }
