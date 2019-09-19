@@ -75,7 +75,8 @@ class Admin extends Controller
             'status' => 1,
             'msg' => '登录成功',
             'data' => array(
-                'token' => $token
+                'token' => $token,
+                'edu_admin_info' => $edu_admin_info
             )
         ));
     }
@@ -140,7 +141,8 @@ class Admin extends Controller
             'status' => -1,
             'msg' => '发送成功！',
             'data' => array(
-                'code' => $code
+                'code' => $code,
+                'str' => $str,
             )
         ));
     }
