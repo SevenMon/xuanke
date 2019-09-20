@@ -38,13 +38,13 @@ class Admin extends Controller
                 'data' => array()
             ));
         }
-        if($real_code != $code){
+        /*if($real_code != $code){
             return json(array(
                 'status' => -1,
                 'msg' => '验证码错误，请重新输入！',
                 'data' => array()
             ));
-        }
+        }*/
 
         $edu_db = Db::connect(config('edu_database'));
         $db = Db();
