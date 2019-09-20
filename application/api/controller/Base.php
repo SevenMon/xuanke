@@ -25,27 +25,29 @@ class Base extends Controller
     public function checkLogin(){
         $token = input('token');
         $info = Db::name('admin')->where('token','=',$token)->find();
-        if(empty($info)){
-            return json(array(
+        if($info == null){
+            echo json_encode(array(
                 'status' => 101,
                 'msg' => '登录超时，请重新登录！',
                 'data' => array(
                 )
             ));
+            exit();
         }
         $this->user_info = $info;
 
         $edu_db = Db::connect(config('edu_database'));
         $edu_admin_info = $edu_db->name('admin')->where('uid','=',$info['edu_uid'])->find();
-        if(empty($edu_admin_info)){
-            return json(array(
+        if($edu_admin_info == null){
+            echo json_encode(array(
                 'status' => 101,
                 'msg' => '用户不存在请重新登陆',
                 'data' => array()
             ));
+            exit();
         }
         $this->edu_user_info = $edu_admin_info;
-        $where = arrray();
+        $where = array();
         $where['admin_id'] = $edu_admin_info['uid'];
         $this->campus_arr = $edu_db->name('admin_campus')->where($where)->column('campus_id');
     }
