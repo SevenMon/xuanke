@@ -28,7 +28,7 @@ class Base extends Controller
         if(empty($info)){
             return json(array(
                 'status' => 101,
-                'msg' => '请登陆之后使用！',
+                'msg' => '登录超时，请重新登录！',
                 'data' => array(
                 )
             ));

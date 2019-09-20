@@ -139,7 +139,7 @@ class Admin extends Controller
 
         cache($str, $code, 300);
         return json(array(
-            'status' => -1,
+            'status' => 1,
             'msg' => '发送成功！',
             'data' => array(
                 'code' => $code,
