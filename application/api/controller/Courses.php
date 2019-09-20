@@ -77,6 +77,7 @@ class Courses extends Base
         $result['course_info'] = $course_info;
         $result['hxnl'] = '分享交往';
         $result['skdd'] = '烘焙区角';
+        $result['kcjj'] = '大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字';
 
         $where = array();
         $where['uid'] = $this->user_info['id'];
