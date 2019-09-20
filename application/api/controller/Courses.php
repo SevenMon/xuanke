@@ -44,6 +44,11 @@ class Courses extends Base
             }
             $value['class_start_end_time'] = timetostr($value['start_time'],$value['end_time']);
 
+            //课程系列
+            $value['cat2_info'] = Db::name('category')->where('id','=',$value['cat_id2'])->find();
+            $attr = Db::name('cat_attr')->where('cat_id','=',$value['cat_id2'])->find();
+            $value['cat2_info']['attr'] =  $attr;
+
         }
         $result['course_list'] = $course_list;
 
@@ -93,6 +98,12 @@ class Courses extends Base
             $result['book_status'] = '预约';
             $result['book_status_code'] = 3;
         }
+
+        //课程系列
+        $result['cat2_info'] = Db::name('category')->where('id','=',$course_info['cat2'])->find();
+        $attr = Db::name('cat_attr')->where('cat_id','=',$course_info['cat2'])->find();
+        $result['cat2_info']['attr'] = $attr;
+
         $result['foot_title'] = '剩余'.($course_info['max_people_num']-$course_info['people_num']).'个名额';
         $result['class_start_end_time'] = timetostr($course_info['start_time'],$course_info['end_time']);
         $result['edu_user_info'] = $this->edu_user_info;
