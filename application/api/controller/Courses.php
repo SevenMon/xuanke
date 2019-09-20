@@ -100,8 +100,8 @@ class Courses extends Base
         }
 
         //课程系列
-        $result['cat2_info'] = Db::name('category')->where('id','=',$course_info['cat2'])->find();
-        $attr = Db::name('cat_attr')->where('cat_id','=',$course_info['cat2'])->find();
+        $result['cat2_info'] = Db::name('category')->where('id','=',$course_info['cat_id2'])->find();
+        $attr = Db::name('cat_attr')->where('cat_id','=',$course_info['cat_id2'])->find();
         $result['cat2_info']['attr'] = $attr;
 
         $result['foot_title'] = '剩余'.($course_info['max_people_num']-$course_info['people_num']).'个名额';

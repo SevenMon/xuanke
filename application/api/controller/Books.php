@@ -2,6 +2,7 @@
 namespace app\api\controller;
 
 use think\Db;
+use think\Request;
 
 class Books extends Base
 {
@@ -19,23 +20,41 @@ class Books extends Base
 
     public function bookList(){
         $where = array();
-        $where[] = array('uid','=',$this->user_info['id']);
+        $where['uid'] = $this->user_info['id'];
         $book_list = Db::name('book')->where($where)->order('status asc,id desc')->select();
-        foreach ($book_list as &$value){
-            $value['class_start_end_time'] = timetostr($value['start_time'],$value['end_time']);
-            $value['status_str'] = $this->status[$value['status']];
+        foreach ($book_list as $key => &$value){
+            //课程
+            $where = array();
+            $where['id'] = $value['course_id'];
+            $course_info = Db::name('course')->where($where)->find();
+            if($course_info != null && !empty($course_info)){
+                $value['course_info'] = $course_info;
+                //课程系列
+                $value['cat2_info'] = Db::name('category')->where('id','=',$course_info['cat_id2'])->find();
+                $attr = Db::name('cat_attr')->where('cat_id','=',$course_info['cat_id2'])->find();
+                $value['cat2_info']['attr'] = $attr;
+
+                $value['class_start_end_time'] = timetostr($course_info['start_time'],$course_info['end_time']);
+                $value['status_str'] = $this->status[$value['status']];
+            }else{
+                unset($book_list[$key]);
+                continue;
+            }
         }
         return json(array(
             'status' => 1,
             'msg' => '获取成功',
-            'data' => $book_list,
+            'data' => array(
+                'book_list' => $book_list,
+                'edu_user_info' => $this->edu_user_info,
+            )
         ));
     }
 
     public function book(){
         $course_id = input('id');
         $where = array();
-        $where[] = array('id','=',$course_id);
+        $where['id'] = $course_id;
         $course_info = Db::name('course')->where($where)->find();
         if(empty($course_info)){
             return json(array(
@@ -45,9 +64,18 @@ class Books extends Base
                 )
             ));
         }
+        if($course_info['people_num'] >= $course_info['max_people_num']){
+            return json(array(
+                'status' => -1,
+                'msg' => '课程人数已满',
+                'data' => array(
+                )
+            ));
+        }
+
         $where = array();
-        $where[] = array('uid','=',$this->user_info['id']);
-        $where[] = array('course_id','=',$course_info['id']);
+        $where['uid'] = $this->user_info['id'];
+        $where['course_id'] = $course_info['id'];
         $book_info = Db::name('book')->where($where)->column('id','course_id');
         if($book_info){
             return json(array(
@@ -71,6 +99,9 @@ class Books extends Base
                 )
             ));
         }else{
+            $where = array();
+            $where['id'] = $course_id;
+            Db::name('course')->where($where)->update(array('people_num' => ++$course_info['people_num']));
             return json(array(
                 'status' => 1,
                 'msg' => '预约成功',
