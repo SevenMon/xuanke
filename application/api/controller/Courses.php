@@ -17,17 +17,17 @@ class Courses extends Base
         $limit = config('api_page_limit');
 
         $result = array();
-        $result['edu_user_info'] = $this->edu_user_info;
-        $result['user_info'] = $this->user_info;
+        $result['edu_student_info'] = $this->edu_student_info;
+        $result['student_info'] = $this->student_info;
 
         $where = array();
         $where['status'] = 1;
-        $where['campus_id'] = array('in',$this->campus_arr);
+        $where['campus_id'] = $this->edu_student_info['campus_id'];
         $course_all_num = Db::name('course')->where($where)->count();
         $course_list = Db::name('course')->where($where)->order('sort desc,id des ')->page($page,$limit)->select();
 
         $where = array();
-        $where['uid'] = $this->user_info['id'];
+        $where['student_id'] = $this->student_info['id'];
         $where['course_id'] = array('in',array_column($course_list,'id'));
         $book_list = Db::name('book')->where($where)->column('id','course_id');
 
@@ -80,9 +80,9 @@ class Courses extends Base
             ));
         }
         $result['course_info'] = $course_info;
-        $result['hxnl'] = '分享交往';
-        $result['skdd'] = '烘焙区角';
-        $result['kcjj'] = '大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字';
+        //$result['hxnl'] = '分享交往';
+        //$result['skdd'] = '烘焙区角';
+        //$result['kcjj'] = '大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字';
 
         $where = array();
         $where['uid'] = $this->user_info['id'];

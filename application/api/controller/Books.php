@@ -21,7 +21,7 @@ class Books extends Base
 
     public function bookList(){
         $where = array();
-        $where['uid'] = $this->user_info['id'];
+        $where['student_id'] = $this->student_info['id'];
         $book_list = Db::name('book')->where($where)->order('status asc,id desc')->select();
         foreach ($book_list as $key => &$value){
             //课程
@@ -47,7 +47,7 @@ class Books extends Base
             'msg' => '获取成功',
             'data' => array(
                 'book_list' => $book_list,
-                'edu_user_info' => $this->edu_user_info,
+                'edu_student_info' => $this->edu_student_info,
             )
         ));
     }
@@ -75,7 +75,7 @@ class Books extends Base
         }
 
         $where = array();
-        $where['uid'] = $this->user_info['id'];
+        $where['student_id'] = $this->student_info['id'];
         $where['course_id'] = $course_info['id'];
         $book_info = Db::name('book')->where($where)->find();
         if($book_info){
@@ -87,8 +87,8 @@ class Books extends Base
             ));
         }
         $data = array(
-            'uid' => $this->user_info['id'],
-            'student_phone' => $this->edu_user_info['account_phone'],
+            'student_id' => $this->student_info['id'],
+            'student_phone' => $this->edu_student_info['stu_phone'],
             'course_id' => $course_info['id']
         );
         $add_info = Db::name('book')->insertGetId($data);
@@ -116,7 +116,7 @@ class Books extends Base
     public function cancelBook(){
         $book_id = input('id');
         $where = array();
-        $where['uid'] = $this->user_info['id'];
+        $where['student_id'] = $this->student_info['id'];
         $where['id'] = $book_id;
         $book_info = Db::name('book')->where($where)->find();
         if($book_info == null || empty($book_info) || $book_info['status'] != 1){

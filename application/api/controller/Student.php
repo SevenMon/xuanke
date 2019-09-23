@@ -5,15 +5,8 @@ namespace app\api\controller;
 use think\Controller;
 use think\Db;
 use think\Config;
-class Admin extends Controller
+class Student extends Controller
 {
-    public function index()
-    {
-        $db = Db::connect(config('edu_database'));
-        $list = $db->name('admin')->select();
-        var_dump($list);
-        exit();
-    }
 
     //登录
     public function login(){
@@ -34,7 +27,7 @@ class Admin extends Controller
         if(empty($real_code)){
             return json(array(
                 'status' => -1,
-                'msg' => '验证码过期，请重新发送！',
+                'msg' => '验证码错误，请重新填写！',
                 'data' => array()
             ));
         }
@@ -48,35 +41,35 @@ class Admin extends Controller
 
         $edu_db = Db::connect(config('edu_database'));
         $db = Db();
-        $edu_admin_info = $edu_db->name('admin')->where('account_phone','=',$phone)->find();
-        if(empty($edu_admin_info)){
+        $edu_student_info = $edu_db->name('student_baseinfo')->where('stu_phone','=',$phone)->find();
+        if(empty($edu_student_info)){
             return json(array(
                 'status' => -1,
                 'msg' => '手机号不存在，请输入正确手机号码！',
                 'data' => array()
             ));
         }
-        $admin_info = $db->name('admin')->where('edu_uid','=',$edu_admin_info['uid'])->find();
+        $sudent_info = $db->name('student')->where('edu_student_id','=',$edu_student_info['id'])->find();
         $token = md5(time()).randstr();
         if(empty($admin_info)){
             $data = array(
-                'edu_uid' => $edu_admin_info['uid'],
+                'edu_student_id' => $edu_student_info['id'],
                 'token' => $token
             );
-            $uid = $db->name('admin')->insertGetId($data);
+            $uid = $db->name('student')->insertGetId($data);
         }else{
             $data = array(
                 'token' => $token
             );
-            $db->name('admin')->where('edu_uid','=',$edu_admin_info['uid'])->update($data);
-            $uid = $admin_info['id'];
+            $db->name('student')->where('edu_student_id','=',$edu_student_info['id'])->update($data);
+            $uid = $sudent_info['id'];
         }
         return json(array(
             'status' => 1,
             'msg' => '登录成功',
             'data' => array(
                 'token' => $token,
-                'edu_admin_info' => $edu_admin_info,
+                'edu_student_info' => $edu_student_info,
                 'uid' => $uid,
             )
         ));
@@ -85,7 +78,7 @@ class Admin extends Controller
     //退出
     public function logout(){
         $token = input('token');
-        $info = Db::name('admin')->where('token','=',$token)->find();
+        $info = Db::name('student')->where('token','=',$token)->find();
         if(empty($info)){
             return json(array(
                 'status' => -1,
@@ -94,7 +87,7 @@ class Admin extends Controller
                 )
             ));
         }
-        $delete_info = Db::name('admin')->where('token','=',$token)->update(array('token' => ''));
+        $delete_info = Db::name('student')->where('token','=',$token)->update(array('token' => ''));
         if(empty($delete_info)){
             return json(array(
                 'status' => -1,
@@ -124,8 +117,8 @@ class Admin extends Controller
             ));
         }
         $edu_db = Db::connect(config('edu_database'));
-        $edu_admin_info = $edu_db->name('admin')->where('account_phone','=',$phone)->find();
-        if(empty($edu_admin_info)){
+        $edu_student_info = $edu_db->name('student_baseinfo')->where('stu_phone','=',$phone)->find();
+        if(empty($edu_student_info)){
             return json(array(
                 'status' => -1,
                 'msg' => '手机号不存在，请输入正确手机号码！',

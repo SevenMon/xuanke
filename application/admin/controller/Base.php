@@ -10,8 +10,8 @@ use think\Request;
 
 class Base extends Controller
 {
-    public $edu_user_info = '';
-    public $user_info = '';
+    public $edu_admin_info = '';
+    public $admin_info = '';
     public $campus_arr = '';
 
 
@@ -19,13 +19,13 @@ class Base extends Controller
     {
         parent::__construct($request);
         //检查登陆
-        //$this->checkLogin();
+        $this->checkLogin();
 
     }
 
     public function checkLogin(){
-        $token = input('admin_token');
-        $info = Db::name('admin')->where('admin_token','=',$token)->find();
+        $token = input('token');
+        $info = Db::name('admin')->where('token','=',$token)->find();
         if($info == null){
             echo json_encode(array(
                 'status' => 101,
@@ -35,7 +35,7 @@ class Base extends Controller
             ));
             exit();
         }
-        $this->user_info = $info;
+        $this->admin_info = $info;
 
         $edu_db = Db::connect(config('edu_database'));
         $edu_admin_info = $edu_db->name('admin')->where('uid','=',$info['edu_uid'])->find();
@@ -47,7 +47,7 @@ class Base extends Controller
             ));
             exit();
         }
-        $this->edu_user_info = $edu_admin_info;
+        $this->edu_admin_info = $edu_admin_info;
         $where = array();
         $where['admin_id'] = $edu_admin_info['uid'];
         $this->campus_arr = $edu_db->name('admin_campus')->where($where)->column('campus_id');
