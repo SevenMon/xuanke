@@ -286,5 +286,6 @@ return [
         'sql_explain'     => false,
     ],
 
-    'api_page_limit' => 5
+    'api_page_limit' => 5,
+    'admin_page_limit' => 5,
 ];
