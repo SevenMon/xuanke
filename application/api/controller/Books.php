@@ -2,6 +2,7 @@
 namespace app\api\controller;
 
 use think\Db;
+use think\Exception;
 use think\Request;
 
 class Books extends Base
@@ -76,7 +77,7 @@ class Books extends Base
         $where = array();
         $where['uid'] = $this->user_info['id'];
         $where['course_id'] = $course_info['id'];
-        $book_info = Db::name('book')->where($where)->column('id','course_id');
+        $book_info = Db::name('book')->where($where)->find();
         if($book_info){
             return json(array(
                 'status' => -1,
@@ -105,6 +106,78 @@ class Books extends Base
             return json(array(
                 'status' => 1,
                 'msg' => '预约成功',
+                'data' => array(
+                )
+            ));
+        }
+
+    }
+
+    public function cancelBook(){
+        $book_id = input('id');
+        $where = array();
+        $where['uid'] = $this->user_info['id'];
+        $where['id'] = $book_id;
+        $book_info = Db::name('book')->where($where)->find();
+        if($book_info == null || empty($book_info) || $book_info['status'] != 1){
+            return json(array(
+                'status' => -1,
+                'msg' => '数据错误',
+                'data' => array(
+                )
+            ));
+        }
+
+        $where = array();
+        $where['id'] = $book_info['course_id'];
+        $course_info = Db::name('course')->where($where)->find();
+        if(empty($course_info)){
+            return json(array(
+                'status' => -1,
+                'msg' => '课程不存在',
+                'data' => array(
+                )
+            ));
+        }
+
+        Db::startTrans();
+        try{
+            $cancel_book_info = Db::name('book')->where('id','=',$book_id)->update(array('status' => 3));
+            if(empty($cancel_book_info)){
+                Db::rollback();
+                return json(array(
+                    'status' => -1,
+                    'msg' => '取消失败！',
+                    'data' => array(
+                    )
+                ));
+            }else{
+                $where = array();
+                $where['id'] = $book_info['course_id'];
+                $update_course_info = Db::name('course')->where($where)->update(array('people_num' => --$course_info['people_num']));
+                if(empty($update_course_info)){
+                    Db::rollback();
+                    return json(array(
+                        'status' => -1,
+                        'msg' => '取消失败！',
+                        'data' => array(
+                        )
+                    ));
+                }else{
+                    Db::commit();
+                    return json(array(
+                        'status' => 1,
+                        'msg' => '取消预约成功',
+                        'data' => array(
+                        )
+                    ));
+                }
+            }
+        }catch (Exception $e){
+            Db::rollback();
+            return json(array(
+                'status' => -1,
+                'msg' => '取消失败！',
                 'data' => array(
                 )
             ));
