@@ -85,7 +85,7 @@ class Courses extends Base
         //$result['kcjj'] = '大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字';
 
         $where = array();
-        $where['uid'] = $this->user_info['id'];
+        $where['student_id'] = $this->student_info['id'];
         $where['course_id'] = $course_info['id'];
         $book_info = Db::name('book')->where($where)->column('id','course_id');
         if($book_info){
@@ -106,7 +106,7 @@ class Courses extends Base
 
         $result['foot_title'] = '剩余'.($course_info['max_people_num']-$course_info['people_num']).'个名额';
         $result['class_start_end_time'] = timetostr($course_info['start_time'],$course_info['end_time']);
-        $result['edu_user_info'] = $this->edu_user_info;
+        $result['edu_user_info'] = $this->edu_student_info;
         return json(array(
             'status' => 1,
             'msg' => '获取成功',
