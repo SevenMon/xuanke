@@ -25,11 +25,11 @@ class Student extends Controller
         //检查验证码
         $real_code = cache($str);
         if(empty($real_code)){
-            return json(array(
+            /*return json(array(
                 'status' => -1,
                 'msg' => '验证码错误，请重新填写！',
                 'data' => array()
-            ));
+            ));*/
         }
         /*if($real_code != $code){
             return json(array(
@@ -64,6 +64,7 @@ class Student extends Controller
             $db->name('student')->where('edu_student_id','=',$edu_student_info['id'])->update($data);
             $uid = $sudent_info['id'];
         }
+        $edu_student_info['campus_info'] = $edu_db->name('campus')->where('id','=',$edu_student_info['campus_id'])->find();
         return json(array(
             'status' => 1,
             'msg' => '登录成功',

@@ -45,6 +45,7 @@ class Base extends Controller
             ));
             exit();
         }
+        $edu_student_info['campus_info'] = $edu_db->name('campus')->where('id','=',$edu_student_info['campus_id'])->find();
         $this->edu_student_info = $edu_student_info;
     }
 
