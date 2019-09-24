@@ -46,8 +46,8 @@ class Courses extends Base
             //校区
             $value['campus_info'] = $edu_db->name('campus')->where('id','=',$value['campus_id'])->find();
 
-            $value['start_time'] = date('Y-m-d H:i:s',$value['start_time']);
-            $value['end_time'] = date('Y-m-d H:i:s',$value['end_time']);
+            $value['start_time_form'] = date('Y-m-d H:i:s',$value['start_time']);
+            $value['end_time_form'] = date('Y-m-d H:i:s',$value['end_time']);
             $value['time'] = date('Y-m-d',$value['start_time']).' '.date('H:i',$value['start_time']).'~'.date('H:i',$value['end_time']);
         }
         $result['list'] = $list;
@@ -66,6 +66,7 @@ class Courses extends Base
     }
 
     public function show(){
+        $edu_db = Db::connect(config('edu_database'));
         $course_id = input('id');
         $where = array();
         $where['id'] = $course_id;
@@ -78,39 +79,121 @@ class Courses extends Base
                 )
             ));
         }
-
-        $result['course_info'] = $course_info;
-        //$result['hxnl'] = '分享交往';
-        //$result['skdd'] = '烘焙区角';
-        //$result['kcjj'] = '大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字大概五十个字';
-
-        $where = array();
-        $where['student_id'] = $this->student_info['id'];
-        $where['course_id'] = $course_info['id'];
-        $book_info = Db::name('book')->where($where)->column('id','course_id');
-        if($book_info){
-            $result['book_status'] = '已预约';
-            $result['book_status_code'] = 1;
-        }elseif ($course_info['people_num'] >=  $course_info['max_people_num']){
-            $result['book_status'] = '已满';
-            $result['book_status_code'] = 2;
-        }else{
-            $result['book_status'] = '预约';
-            $result['book_status_code'] = 3;
-        }
-
+        //级别
+        $course_info['cat_id1_info'] = Db::name('category')->where('id','=',$course_info['cat_id1'])->find();
         //课程系列
-        $result['cat2_info'] = Db::name('category')->where('id','=',$course_info['cat_id2'])->find();
-        $attr = Db::name('cat_attr')->where('cat_id','=',$course_info['cat_id2'])->find();
-        $result['cat2_info']['attr'] = $attr;
+        $course_info['cat_id2_info'] = Db::name('category')->where('id','=',$course_info['cat_id2'])->find();
+        //主教
+        $course_info['teacher_main_info'] = $edu_db->name('admin')->where('uid','=',$course_info['teacher_main_uid'])->find();
+        //助教
+        $course_info['teacher_assist_info'] = $edu_db->name('admin')->where('uid','=',$course_info['teacher_assist_uid'])->find();
+        //校区
+        $course_info['campus_info'] = $edu_db->name('campus')->where('id','=',$course_info['campus_id'])->find();
 
-        $result['foot_title'] = '剩余'.($course_info['max_people_num']-$course_info['people_num']).'个名额';
-        $result['class_start_end_time'] = timetostr($course_info['start_time'],$course_info['end_time']);
-        $result['edu_user_info'] = $this->edu_student_info;
+        $course_info['start_time_form'] = date('Y-m-d H:i:s',$course_info['start_time']);
+        $course_info['end_time_form'] = date('Y-m-d H:i:s',$course_info['end_time']);
+        $course_info['time'] = date('Y-m-d',$course_info['start_time']).' '.date('H:i',$course_info['start_time']).'~'.date('H:i',$value['end_time']);
         return json(array(
             'status' => 1,
             'msg' => '获取成功',
-            'data' => $result
+            'data' => array(
+                'course_info'=>$course_info
+            )
         ));
+
+    }
+
+    public function store(){
+        $edu_db = Db::connect(config('edu_database'));
+        $name = input('name','');
+        if(empty($name)){
+            return json(array(
+                'status' => -1,
+                'msg' => '课程名不能为空',
+                'data' => array(
+                )
+            ));
+        }
+
+        $cat_id1 = input('cat_id1','');
+        $cat_info1 = Db::name('category')->where('id','=',$cat_id1)->find();
+        if($cat_info1 == null){
+            return json(array(
+                'status' => -1,
+                'msg' => '课程级别不存在',
+                'data' => array(
+                )
+            ));
+        }
+
+        $cat_id2 = input('cat_id2','');
+        $cat_info2 = Db::name('category')->where('id','=',$cat_id2)->find();
+        if($cat_info2 == null){
+            return json(array(
+                'status' => -1,
+                'msg' => '课程系列不存在',
+                'data' => array(
+                )
+            ));
+        }
+        $start_time = input('start_time','');
+        $end_time = input('end_time','');
+        if(empty($start_time) || empty($end_time) || $start_time > $end_time){
+            return json(array(
+                'status' => -1,
+                'msg' => '上课时间不合法，请重新输入',
+                'data' => array(
+                )
+            ));
+        }
+
+        $teacher_main_uid = input('teacher_main_uid','');
+        $teacher_main_info = $edu_db->name('admin')->where('uid','=',$teacher_main_uid)->find();
+        if($teacher_main_info == null){
+            return json(array(
+                'status' => -1,
+                'msg' => '主教老师不存在',
+                'data' => array(
+                )
+            ));
+        }
+
+        $teacher_assist_uid = input('teacher_assist_uid','');
+        $teacher_assist_info = $edu_db->name('admin')->where('uid','=',$teacher_assist_uid)->find();
+        if($teacher_assist_info == null){
+            return json(array(
+                'status' => -1,
+                'msg' => '助教老师不存在',
+                'data' => array(
+                )
+            ));
+        }
+        $sort = input('sort',0);
+        $data = array(
+            'cat_id1' => $cat_id1,
+            'cat_id2' => $cat_id2,
+            'start_time' => $start_time,
+            'end_time' => $end_time,
+            'teacher_main_uid' => $teacher_main_uid,
+            'teacher_assist_uid' => $teacher_assist_uid,
+            'campuse_id' => $this->campus_arr[0],
+            'sort' => $sort
+        );
+
+        Db::name('course')->insertGetId($data);
+        return json(array(
+            'status' => 1,
+            'msg' => '添加成功',
+            'data' => array()
+        ));
+
+    }
+
+    public function update(){
+
+    }
+
+    public function destroy(){
+
     }
 }
