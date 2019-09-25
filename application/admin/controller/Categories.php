@@ -99,7 +99,7 @@ class Categories extends Base
         $attr = array();
         $data['name'] = $name;
         $data['sort'] = $sort;
-        $data['level'] = 1;
+        $data['level'] = $level;
 
         $parent_id = input('parent_id',0);
         if($parent_id != 0){
