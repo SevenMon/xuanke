@@ -2,6 +2,7 @@
 namespace app\admin\controller;
 
 use think\Db;
+use think\Exception;
 use think\Request;
 
 class Courses extends Base
@@ -70,6 +71,8 @@ class Courses extends Base
         $course_id = input('id');
         $where = array();
         $where['id'] = $course_id;
+        $where['status'] = array('neq',0);
+        $where['campus_id'] = array('in',$this->campus_arr);
         $course_info = Db::name('course')->where($where)->find();
         if(empty($course_info)){
             return json(array(
@@ -190,10 +193,151 @@ class Courses extends Base
     }
 
     public function update(){
+        $course_id = input('id');
+        $where = array();
+        $where['status'] = array('neq',0);
+        $where['campus_id'] = array('in',$this->campus_arr);
+        $where['id'] = $course_id;
+        $course_info = Db::name('course')->where($where)->find();
+        if(empty($course_info)){
+            return json(array(
+                'status' => -1,
+                'msg' => '课程不存在',
+                'data' => array(
+                )
+            ));
+        }
+        $edu_db = Db::connect(config('edu_database'));
+        $name = input('name','');
+        if(empty($name)){
+            return json(array(
+                'status' => -1,
+                'msg' => '课程名不能为空',
+                'data' => array(
+                )
+            ));
+        }
 
+        $cat_id1 = input('cat_id1','');
+        $cat_info1 = Db::name('category')->where('id','=',$cat_id1)->find();
+        if($cat_info1 == null){
+            return json(array(
+                'status' => -1,
+                'msg' => '课程级别不存在',
+                'data' => array(
+                )
+            ));
+        }
+
+        $cat_id2 = input('cat_id2','');
+        $cat_info2 = Db::name('category')->where('id','=',$cat_id2)->find();
+        if($cat_info2 == null){
+            return json(array(
+                'status' => -1,
+                'msg' => '课程系列不存在',
+                'data' => array(
+                )
+            ));
+        }
+        $start_time = input('start_time','');
+        $end_time = input('end_time','');
+        if(empty($start_time) || empty($end_time) || $start_time > $end_time){
+            return json(array(
+                'status' => -1,
+                'msg' => '上课时间不合法，请重新输入',
+                'data' => array(
+                )
+            ));
+        }
+
+        $teacher_main_uid = input('teacher_main_uid','');
+        $teacher_main_info = $edu_db->name('admin')->where('uid','=',$teacher_main_uid)->find();
+        if($teacher_main_info == null){
+            return json(array(
+                'status' => -1,
+                'msg' => '主教老师不存在',
+                'data' => array(
+                )
+            ));
+        }
+
+        $teacher_assist_uid = input('teacher_assist_uid','');
+        $teacher_assist_info = $edu_db->name('admin')->where('uid','=',$teacher_assist_uid)->find();
+        if($teacher_assist_info == null){
+            return json(array(
+                'status' => -1,
+                'msg' => '助教老师不存在',
+                'data' => array(
+                )
+            ));
+        }
+        $sort = input('sort',0);
+        $data = array(
+            'cat_id1' => $cat_id1,
+            'cat_id2' => $cat_id2,
+            'start_time' => $start_time,
+            'end_time' => $end_time,
+            'teacher_main_uid' => $teacher_main_uid,
+            'teacher_assist_uid' => $teacher_assist_uid,
+            'campuse_id' => $this->campus_arr[0],
+            'sort' => $sort
+        );
+        try{
+            Db::name('course')->where('id','=',$course_id)->update($data);
+            return json(array(
+                'status' => 1,
+                'msg' => '修改成功',
+                'data' => array()
+            ));
+        }catch (Exception $e){
+            return json(array(
+                'status' => -1,
+                'msg' => '修改失败',
+                'data' => array()
+            ));
+        }
     }
 
     public function destroy(){
+        $course_id = input('id');
+        $where = array();
+        $where['status'] = array('neq',0);
+        $where['campus_id'] = array('in',$this->campus_arr);
+        $where['id'] = $course_id;
+        $course_info = Db::name('course')->where($where)->find();
+        if(empty($course_info)){
+            return json(array(
+                'status' => -1,
+                'msg' => '课程不存在',
+                'data' => array(
+                )
+            ));
+        }
+        try{
+            Db::name('course')->where('id','=',$course_id)->update(array('status' => 0));
+            return json(array(
+                'status' => 1,
+                'msg' => '删除成功',
+                'data' => array()
+            ));
+        }catch (Exception $e){
+            return json(array(
+                'status' => -1,
+                'msg' => '删除失败',
+                'data' => array()
+            ));
+        }
+    }
 
+    public function getTeacherList(){
+        $edu_db = Db::connect(config('edu_database'));
+        $teacher_list = $edu_db->name('admin')->where('state','=',1)->select();
+        return json(array(
+            'status' => 1,
+            'msg' => '获取成功',
+            'data' => array(
+                'teacher_list' => $teacher_list
+            )
+        ));
     }
 }

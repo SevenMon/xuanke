@@ -28,6 +28,13 @@ class Categories extends Base
             if($value['son']){
                 foreach ($value['son'] as &$son_item){
                     $son_item['attr'] = Db::name('cat_attr')->where('cat_id','=',$son_item['id'])->select();
+                    $where = array();
+                    $where['parent_id'] = $son_item['id'];
+                    $where['status'] = array('neq',0);
+                    $son_item['son'] = Db::name('category')->where($where)->select();
+                    foreach ($son_item['son'] as &$son_son_item){
+                        $son_son_item['attr'] = Db::name('cat_attr')->where('cat_id','=',$son_son_item['id'])->select();
+                    }
                 }
             }
         }
@@ -57,6 +64,13 @@ class Categories extends Base
             $cat_info['son'] = Db::name('category')->where('parent_id','=',$cat_info['id'])->select();
             foreach ($cat_info['son'] as &$value){
                 $value['attr'] = Db::name('cat_attr')->where('cat_id','=',$value['id'])->select();
+                $where = array();
+                $where['parent_id'] = $value['id'];
+                $where['status'] = array('neq',0);
+                $son_item['son'] = Db::name('category')->where($where)->select();
+                foreach ($son_item['son'] as &$son_son_item){
+                    $son_son_item['attr'] = Db::name('cat_attr')->where('cat_id','=',$son_son_item['id'])->select();
+                }
             }
         }
 
@@ -70,6 +84,7 @@ class Categories extends Base
     }
 
     public function store(){
+        $level = input('level','');
         $name = input('name','');
         $sort = input('sort',0);
         if(empty($name)){
@@ -103,14 +118,26 @@ class Categories extends Base
             $attr_hxnl = input('attr_hxnl','');
             $attr_class_place = input('attr_class_place','');
             $attr_class_content = input('attr_class_content','');
-            if(empty($attr_img) || empty($attr_banner_img) || empty($attr_hxnl) || empty($attr_class_place) || empty($attr_class_content)){
-                return json(array(
-                    'status' => -1,
-                    'msg' => '课程系列参数不能为空',
-                    'data' => array(
-                    )
-                ));
+            if($level == 2){
+                if(empty($attr_img) || empty($attr_hxnl) || empty($attr_class_place) || empty($attr_class_content)){
+                    return json(array(
+                        'status' => -1,
+                        'msg' => '课程系列参数不能为空',
+                        'data' => array(
+                        )
+                    ));
+                }
+            }elseif ($level == 3){
+                if(empty($attr_banner_img)){
+                    return json(array(
+                        'status' => -1,
+                        'msg' => '课程系列参数不能为空',
+                        'data' => array(
+                        )
+                    ));
+                }
             }
+
 
             $attr = array(
                 'img' => $attr_img,
@@ -148,6 +175,7 @@ class Categories extends Base
     }
 
     public function update(){
+        $level = input('level','');
         $cat_id = input('id','');
         $cat_info = Db::name('category')->where('id','=',$cat_id)->find();
         if($cat_info == null){
@@ -189,13 +217,24 @@ class Categories extends Base
             $attr_hxnl = input('attr_hxnl','');
             $attr_class_place = input('attr_class_place','');
             $attr_class_content = input('attr_class_content','');
-            if(empty($attr_img) || empty($attr_banner_img) || empty($attr_hxnl) || empty($attr_class_place) || empty($attr_class_content)){
-                return json(array(
-                    'status' => -1,
-                    'msg' => '课程系列参数不能为空',
-                    'data' => array(
-                    )
-                ));
+            if($level == 2){
+                if(empty($attr_img) || empty($attr_hxnl) || empty($attr_class_place) || empty($attr_class_content)){
+                    return json(array(
+                        'status' => -1,
+                        'msg' => '课程系列参数不能为空',
+                        'data' => array(
+                        )
+                    ));
+                }
+            }elseif ($level == 3){
+                if(empty($attr_banner_img)){
+                    return json(array(
+                        'status' => -1,
+                        'msg' => '课程系列参数不能为空',
+                        'data' => array(
+                        )
+                    ));
+                }
             }
 
             $attr = array(
