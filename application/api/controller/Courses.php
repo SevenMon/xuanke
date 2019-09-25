@@ -40,7 +40,7 @@ class Courses extends Base
                     $value['book_status'] = '已到课';
                     $value['book_status_code'] = 4;
                 }else{
-                    $value['book_status'] = '已取消';
+                    $value['book_status'] = '预约';
                     $value['book_status_code'] = 5;
                 }
             }elseif ($value['people_num'] >=  $value['max_people_num']){
@@ -104,7 +104,7 @@ class Courses extends Base
                 $result['book_status'] = '已到课';
                 $result['book_status_code'] = 4;
             }else{
-                $result['book_status'] = '已取消';
+                $result['book_status'] = '预约';
                 $result['book_status_code'] = 5;
             }
         }elseif ($course_info['people_num'] >=  $course_info['max_people_num']){
