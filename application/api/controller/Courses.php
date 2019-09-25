@@ -40,7 +40,7 @@ class Courses extends Base
                     $value['book_status'] = '已到课';
                     $value['book_status_code'] = 4;
                 }else{
-                    $value['book_status'] = '预约';
+                    $value['book_status'] = '剩余'.($value['max_people_num']-$value['people_num']).'个名额';
                     $value['book_status_code'] = 3;
                 }
             }elseif ($value['people_num'] >=  $value['max_people_num']){
