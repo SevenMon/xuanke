@@ -29,12 +29,20 @@ class Courses extends Base
         $where = array();
         $where['student_id'] = $this->student_info['id'];
         $where['course_id'] = array('in',array_column($course_list,'id'));
-        $book_list = Db::name('book')->where($where)->column('id','course_id');
+        $book_list = Db::name('book')->where($where)->column('*','course_id');
 
         foreach ($course_list as &$value){
             if(isset($book_list[$value['id']])){
-                $value['book_status'] = '已预约';
-                $value['book_status_code'] = 1;
+                if($book_list[$value['id']]['status'] == 1){
+                    $value['book_status'] = '已预约';
+                    $value['book_status_code'] = 1;
+                }elseif ($book_list[$value['id']]['status'] == 2){
+                    $value['book_status'] = '已到课';
+                    $value['book_status_code'] = 4;
+                }else{
+                    $value['book_status'] = '已取消';
+                    $value['book_status_code'] = 4;
+                }
             }elseif ($value['people_num'] >=  $value['max_people_num']){
                 $value['book_status'] = '已满';
                 $value['book_status_code'] = 2;
@@ -89,8 +97,16 @@ class Courses extends Base
         $where['course_id'] = $course_info['id'];
         $book_info = Db::name('book')->where($where)->find();
         if($book_info){
-            $result['book_status'] = '已预约';
-            $result['book_status_code'] = 1;
+            if($book_info['status'] == 1){
+                $result['book_status'] = '已预约';
+                $result['book_status_code'] = 1;
+            }elseif ($book_info['status'] == 2){
+                $result['book_status'] = '已到课';
+                $result['book_status_code'] = 4;
+            }else{
+                $result['book_status'] = '已取消';
+                $result['book_status_code'] = 4;
+            }
         }elseif ($course_info['people_num'] >=  $course_info['max_people_num']){
             $result['book_status'] = '已满';
             $result['book_status_code'] = 2;
