@@ -79,37 +79,61 @@ class Books extends Base
         $where['course_id'] = $course_info['id'];
         $book_info = Db::name('book')->where($where)->find();
         if($book_info){
-            return json(array(
-                'status' => -1,
-                'msg' => '已预约过，不能再次预约！',
-                'data' => array(
-                )
-            ));
-        }
-        $data = array(
-            'student_id' => $this->student_info['id'],
-            'student_phone' => $this->edu_student_info['stu_phone'],
-            'course_id' => $course_info['id']
-        );
-        $add_info = Db::name('book')->insertGetId($data);
-        if(empty($add_info)){
-            return json(array(
-                'status' => -1,
-                'msg' => '预约失败，稍后再试！',
-                'data' => array(
-                )
-            ));
+            if($book_info['status'] == 1 || $book_info['status'] == 2){
+                return json(array(
+                    'status' => -1,
+                    'msg' => '已预约过，不能再次预约！',
+                    'data' => array(
+                    )
+                ));
+            }else{
+                $update_info = Db::name('book')->where('id','=',$book_info['id'])->update(array('status' => 1));
+                if(empty($update_info)){
+                    return json(array(
+                        'status' => -1,
+                        'msg' => '预约失败，稍后再试！',
+                        'data' => array(
+                        )
+                    ));
+                }else{
+                    $where = array();
+                    $where['id'] = $course_id;
+                    Db::name('course')->where($where)->update(array('people_num' => ++$course_info['people_num']));
+                    return json(array(
+                        'status' => 1,
+                        'msg' => '预约成功',
+                        'data' => array(
+                        )
+                    ));
+                }
+            }
         }else{
-            $where = array();
-            $where['id'] = $course_id;
-            Db::name('course')->where($where)->update(array('people_num' => ++$course_info['people_num']));
-            return json(array(
-                'status' => 1,
-                'msg' => '预约成功',
-                'data' => array(
-                )
-            ));
+            $data = array(
+                'student_id' => $this->student_info['id'],
+                'student_phone' => $this->edu_student_info['stu_phone'],
+                'course_id' => $course_info['id']
+            );
+            $add_info = Db::name('book')->insertGetId($data);
+            if(empty($add_info)){
+                return json(array(
+                    'status' => -1,
+                    'msg' => '预约失败，稍后再试！',
+                    'data' => array(
+                    )
+                ));
+            }else{
+                $where = array();
+                $where['id'] = $course_id;
+                Db::name('course')->where($where)->update(array('people_num' => ++$course_info['people_num']));
+                return json(array(
+                    'status' => 1,
+                    'msg' => '预约成功',
+                    'data' => array(
+                    )
+                ));
+            }
         }
+
 
     }
 
