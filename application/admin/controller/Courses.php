@@ -16,7 +16,7 @@ class Courses extends Base
     public function index(){
         $edu_db = Db::connect(config('edu_database'));
         $page = input('page',1);
-        $limit = config('api_page_limit');
+        $limit = config('admin_page_limit');
         $condition = array();
         $condition['status'] = array('neq',0);
         $condition['campus_id'] = array('in',$this->campus_arr);
@@ -26,20 +26,29 @@ class Courses extends Base
         }
         $cat_id2 = input('cat_id2','');
         if(!empty($cat_id2)){
-            $condition['cat_id1'] = $cat_id2;
+            $condition['cat_id2'] = $cat_id2;
         }
-        $name = input('name','');
-        if(!empty($name)){
-            $condition['name'] = array('like','%'.$name.'%');
+        $cat_id3 = input('cat_id3','');
+        if(!empty($cat_id2)){
+            $condition['cat_id3'] = $cat_id3;
         }
+
+        $start_time = input('start_time','');
+        $end_time = input('end_time','');
+        if(!empty($end_time) && !empty($end_time)){
+            $condition['start_time'] = array('between',array(strtotime($start_time),strtotime($end_time)));
+        }
+
         $course_all_num = Db::name('course')->where($condition)->count();
 
-        $list = Db::name('course')->where($condition)->order('id desc')->select();
+        $list = Db::name('course')->where($condition)->order('start_time desc')->page($page,$limit)->select();
         foreach ($list as &$value){
             //级别
             $value['cat_id1_info'] = Db::name('category')->where('id','=',$value['cat_id1'])->find();
             //课程系列
             $value['cat_id2_info'] = Db::name('category')->where('id','=',$value['cat_id2'])->find();
+            //课程
+            $value['cat_id3_info'] = Db::name('category')->where('id','=',$value['cat_id3'])->find();
             //主教
             $value['teacher_main_info'] = $edu_db->name('admin')->where('uid','=',$value['teacher_main_uid'])->find();
             //助教
@@ -86,6 +95,8 @@ class Courses extends Base
         $course_info['cat_id1_info'] = Db::name('category')->where('id','=',$course_info['cat_id1'])->find();
         //课程系列
         $course_info['cat_id2_info'] = Db::name('category')->where('id','=',$course_info['cat_id2'])->find();
+        //课程
+        $course_info['cat_id3_info'] = Db::name('category')->where('id','=',$course_info['cat_id3'])->find();
         //主教
         $course_info['teacher_main_info'] = $edu_db->name('admin')->where('uid','=',$course_info['teacher_main_uid'])->find();
         //助教
@@ -95,7 +106,14 @@ class Courses extends Base
 
         $course_info['start_time_form'] = date('Y-m-d H:i:s',$course_info['start_time']);
         $course_info['end_time_form'] = date('Y-m-d H:i:s',$course_info['end_time']);
-        $course_info['time'] = date('Y-m-d',$course_info['start_time']).' '.date('H:i',$course_info['start_time']).'~'.date('H:i',$value['end_time']);
+        $course_info['time'] = date('Y-m-d',$course_info['start_time']).' '.date('H:i',$course_info['start_time']).'~'.date('H:i',$course_info['end_time']);
+
+        $course_info['bookList'] = Db::name('book')->where('course_id','=',$course_info['id'])->select();
+        $student_list = Db::name('student')->where(array('id' => array('in',array_column($course_info['bookList'],'student_id'))))->column('*','id');
+        $edu_student_list = $edu_db->name('student_baseinfo')->where(array('id'=>array('in',array_column($student_list,'edu_student_id'))))->column('*','id');
+        foreach ($course_info['bookList'] as &$value){
+            $value['edu_student_info'] = $edu_student_list[$student_list[$value['student_id']]['edu_student_id']];
+        }
         return json(array(
             'status' => 1,
             'msg' => '获取成功',
@@ -108,15 +126,6 @@ class Courses extends Base
 
     public function store(){
         $edu_db = Db::connect(config('edu_database'));
-        $name = input('name','');
-        if(empty($name)){
-            return json(array(
-                'status' => -1,
-                'msg' => '课程名不能为空',
-                'data' => array(
-                )
-            ));
-        }
 
         $cat_id1 = input('cat_id1','');
         $cat_info1 = Db::name('category')->where('id','=',$cat_id1)->find();
@@ -139,15 +148,31 @@ class Courses extends Base
                 )
             ));
         }
-        $start_time = input('start_time','');
-        $end_time = input('end_time','');
-        if(empty($start_time) || empty($end_time) || $start_time > $end_time){
+
+        $cat_id3 = input('cat_id3','');
+        $cat_info3 = Db::name('category')->where('id','=',$cat_id3)->find();
+        if($cat_info3 == null){
             return json(array(
                 'status' => -1,
-                'msg' => '上课时间不合法，请重新输入',
+                'msg' => '课程不存在',
                 'data' => array(
                 )
             ));
+        }
+
+        $start_time = input('start_time','');
+        $end_time = input('end_time','');
+        if(empty($start_time) || empty($end_time)){
+            $start_time = strtotime($start_time);
+            $end_time = strtotime($end_time);
+            if(strtotime($start_time) > strtotime($end_time)){
+                return json(array(
+                    'status' => -1,
+                    'msg' => '上课时间不合法，请重新输入',
+                    'data' => array(
+                    )
+                ));
+            }
         }
 
         $teacher_main_uid = input('teacher_main_uid','');
@@ -175,6 +200,7 @@ class Courses extends Base
         $data = array(
             'cat_id1' => $cat_id1,
             'cat_id2' => $cat_id2,
+            'cat_id3' => $cat_id3,
             'start_time' => $start_time,
             'end_time' => $end_time,
             'teacher_main_uid' => $teacher_main_uid,
@@ -208,15 +234,7 @@ class Courses extends Base
             ));
         }
         $edu_db = Db::connect(config('edu_database'));
-        $name = input('name','');
-        if(empty($name)){
-            return json(array(
-                'status' => -1,
-                'msg' => '课程名不能为空',
-                'data' => array(
-                )
-            ));
-        }
+
 
         $cat_id1 = input('cat_id1','');
         $cat_info1 = Db::name('category')->where('id','=',$cat_id1)->find();
@@ -239,15 +257,31 @@ class Courses extends Base
                 )
             ));
         }
-        $start_time = input('start_time','');
-        $end_time = input('end_time','');
-        if(empty($start_time) || empty($end_time) || $start_time > $end_time){
+
+        $cat_id3 = input('cat_id3','');
+        $cat_info3 = Db::name('category')->where('id','=',$cat_id3)->find();
+        if($cat_info3 == null){
             return json(array(
                 'status' => -1,
-                'msg' => '上课时间不合法，请重新输入',
+                'msg' => '课程不存在',
                 'data' => array(
                 )
             ));
+        }
+
+        $start_time = input('start_time','');
+        $end_time = input('end_time','');
+        if(empty($start_time) || empty($end_time)){
+            $start_time = strtotime($start_time);
+            $end_time = strtotime($end_time);
+            if(strtotime($start_time) > strtotime($end_time)){
+                return json(array(
+                    'status' => -1,
+                    'msg' => '上课时间不合法，请重新输入',
+                    'data' => array(
+                    )
+                ));
+            }
         }
 
         $teacher_main_uid = input('teacher_main_uid','');
@@ -275,6 +309,7 @@ class Courses extends Base
         $data = array(
             'cat_id1' => $cat_id1,
             'cat_id2' => $cat_id2,
+            'cat_id3' => $cat_id3,
             'start_time' => $start_time,
             'end_time' => $end_time,
             'teacher_main_uid' => $teacher_main_uid,

@@ -22,6 +22,7 @@ class Books extends Base
     public function bookList(){
         $where = array();
         $where['student_id'] = $this->student_info['id'];
+        $where['status'] = array('gt',0);
         $book_list = Db::name('book')->where($where)->order('status asc,id desc')->select();
         foreach ($book_list as $key => &$value){
             //课程

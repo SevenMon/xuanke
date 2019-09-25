@@ -40,3 +40,7 @@ function getTimeWeek($time, $i = 0) {
     $oneD = 24 * 60 * 60;
     return "星期" . $weekarray[date("w", $time + $oneD * $i)];
 }
+
+function getUrl(){
+
+}

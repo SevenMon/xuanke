@@ -287,5 +287,5 @@ return [
     ],
 
     'api_page_limit' => 5,
-    'admin_page_limit' => 5,
+    'admin_page_limit' => 25,
 ];
