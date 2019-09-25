@@ -103,7 +103,6 @@ class Categories extends Base
 
         $parent_id = input('parent_id',0);
         if($parent_id != 0){
-            $data['level'] = 2;
             $parent_cat_info = Db::name('category')->where('id','=',$parent_id)->find();
             if($parent_cat_info == null){
                 return json(array(
