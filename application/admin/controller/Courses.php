@@ -368,7 +368,7 @@ class Courses extends Base
         $edu_db = Db::connect(config('edu_database'));
         $where = array();
         $where['campus_id'] = array('in',$this->campus_arr);
-        $admin_id_arr = $edu_db->where($where)->column('admin_id');
+        $admin_id_arr = $edu_db->name('admin_campus')->where($where)->column('admin_id');
 
         $where = array();
         $where['state'] = 1;
