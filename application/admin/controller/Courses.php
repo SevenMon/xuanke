@@ -197,6 +197,8 @@ class Courses extends Base
             ));
         }
         $sort = input('sort',0);
+        $start_class_people_num = input('start_class_people_num',0);
+        $max_people_num = input('max_people_num',0);
         $data = array(
             'cat_id1' => $cat_id1,
             'cat_id2' => $cat_id2,
@@ -206,7 +208,9 @@ class Courses extends Base
             'teacher_main_uid' => $teacher_main_uid,
             'teacher_assist_uid' => $teacher_assist_uid,
             'campuse_id' => $this->campus_arr[0],
-            'sort' => $sort
+            'sort' => $sort,
+            'start_class_people_num' => $start_class_people_num,
+            'max_people_num' => $max_people_num,
         );
 
         Db::name('course')->insertGetId($data);
@@ -306,6 +310,8 @@ class Courses extends Base
             ));
         }
         $sort = input('sort',0);
+        $start_class_people_num = input('start_class_people_num',0);
+        $max_people_num = input('max_people_num',0);
         $data = array(
             'cat_id1' => $cat_id1,
             'cat_id2' => $cat_id2,
@@ -315,7 +321,9 @@ class Courses extends Base
             'teacher_main_uid' => $teacher_main_uid,
             'teacher_assist_uid' => $teacher_assist_uid,
             'campuse_id' => $this->campus_arr[0],
-            'sort' => $sort
+            'sort' => $sort,
+            'start_class_people_num' => $start_class_people_num,
+            'max_people_num' => $max_people_num,
         );
         try{
             Db::name('course')->where('id','=',$course_id)->update($data);
