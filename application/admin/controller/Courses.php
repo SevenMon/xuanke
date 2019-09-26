@@ -162,17 +162,15 @@ class Courses extends Base
 
         $start_time = input('start_time','');
         $end_time = input('end_time','');
-        if(empty($start_time) || empty($end_time)){
-            $start_time = strtotime($start_time);
-            $end_time = strtotime($end_time);
-            if(strtotime($start_time) > strtotime($end_time)){
-                return json(array(
-                    'status' => -1,
-                    'msg' => '上课时间不合法，请重新输入',
-                    'data' => array(
-                    )
-                ));
-            }
+        $start_time = strtotime($start_time);
+        $end_time = strtotime($end_time);
+        if(empty($start_time) || empty($end_time) || strtotime($start_time) > strtotime($end_time)){
+            return json(array(
+                'status' => -1,
+                'msg' => '上课时间不合法，请重新输入',
+                'data' => array(
+                )
+            ));
         }
 
         $teacher_main_uid = input('teacher_main_uid','');
@@ -207,7 +205,7 @@ class Courses extends Base
             'end_time' => $end_time,
             'teacher_main_uid' => $teacher_main_uid,
             'teacher_assist_uid' => $teacher_assist_uid,
-            'campuse_id' => $this->campus_arr[0],
+            'campus_id' => $this->campus_arr[0],
             'sort' => $sort,
             'start_class_people_num' => $start_class_people_num,
             'max_people_num' => $max_people_num,
@@ -275,17 +273,15 @@ class Courses extends Base
 
         $start_time = input('start_time','');
         $end_time = input('end_time','');
-        if(empty($start_time) || empty($end_time)){
-            $start_time = strtotime($start_time);
-            $end_time = strtotime($end_time);
-            if(strtotime($start_time) > strtotime($end_time)){
-                return json(array(
-                    'status' => -1,
-                    'msg' => '上课时间不合法，请重新输入',
-                    'data' => array(
-                    )
-                ));
-            }
+        $start_time = strtotime($start_time);
+        $end_time = strtotime($end_time);
+        if(empty($start_time) || empty($end_time) || strtotime($start_time) > strtotime($end_time)){
+            return json(array(
+                'status' => -1,
+                'msg' => '上课时间不合法，请重新输入',
+                'data' => array(
+                )
+            ));
         }
 
         $teacher_main_uid = input('teacher_main_uid','');
@@ -320,7 +316,7 @@ class Courses extends Base
             'end_time' => $end_time,
             'teacher_main_uid' => $teacher_main_uid,
             'teacher_assist_uid' => $teacher_assist_uid,
-            'campuse_id' => $this->campus_arr[0],
+            'campus_id' => $this->campus_arr[0],
             'sort' => $sort,
             'start_class_people_num' => $start_class_people_num,
             'max_people_num' => $max_people_num,
