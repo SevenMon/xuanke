@@ -366,7 +366,14 @@ class Courses extends Base
 
     public function getTeacherList(){
         $edu_db = Db::connect(config('edu_database'));
-        $teacher_list = $edu_db->name('admin')->where('state','=',1)->select();
+        $where = array();
+        $where['campus_id'] = array('in',$this->campus_arr);
+        $admin_id_arr = $edu_db->where($where)->column('admin_id');
+
+        $where = array();
+        $where['state'] = 1;
+        $where['admin_id'] = array('in',array_unique($admin_id_arr));
+        $teacher_list = $edu_db->name('admin')->where($where)->column();
         return json(array(
             'status' => 1,
             'msg' => '获取成功',

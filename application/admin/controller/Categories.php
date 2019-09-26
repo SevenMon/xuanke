@@ -336,6 +336,4 @@ class Categories extends Base
             }
         }
     }
-
-
 }
