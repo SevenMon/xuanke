@@ -372,8 +372,8 @@ class Courses extends Base
 
         $where = array();
         $where['state'] = 1;
-        $where['admin_id'] = array('in',array_unique($admin_id_arr));
-        $teacher_list = $edu_db->name('admin')->where($where)->column();
+        $where['uid'] = array('in',array_unique($admin_id_arr));
+        $teacher_list = $edu_db->name('admin')->where($where)->select();
         return json(array(
             'status' => 1,
             'msg' => '获取成功',
