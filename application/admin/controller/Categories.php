@@ -322,7 +322,7 @@ class Categories extends Base
                     'status' => 1,
                     'msg' => $file->getError(),
                     'data' => array(
-                        'path' =>''；
+                        'path' =>''
                     )
                 ));
             }else{
