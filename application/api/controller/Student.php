@@ -27,7 +27,7 @@ class Student extends Controller
         if(empty($real_code)){
             return json(array(
                 'status' => -1,
-                'msg' => '验证码错误，请重新输入！',
+                'msg' => '验证码错误，请重新输入！！！',
                 'data' => array()
             ));
         }
