@@ -44,7 +44,7 @@ class Books extends Base
                 $value['status_str'] = $this->status[$value['status']];
                 if(!canbook() && ($value['status'] == 1 || $value['status'] == 3)){
                     $value['status_str'] = '已过预约时间';
-                    $value['status'] = -1;
+                    $book_list[$key]['status'] = -1;
                 }
             }else{
                 unset($book_list[$key]);
