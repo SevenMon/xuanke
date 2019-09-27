@@ -52,3 +52,7 @@ function is_ssl() {
     }
     return 'http://';
 }
+
+function canbook(){
+    return true;
+}
