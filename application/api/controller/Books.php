@@ -34,10 +34,14 @@ class Books extends Base
                 //课程系列
                 $value['cat2_info'] = Db::name('category')->where('id','=',$course_info['cat_id2'])->find();
                 $attr = Db::name('cat_attr')->where('cat_id','=',$course_info['cat_id2'])->find();
+                $attr['img'] =  getUrl().$attr['img'];
+                $attr['banner_img'] =  getUrl().$attr['banner_img'];
                 $value['cat2_info']['attr'] = $attr;
                 //课程
                 $value['cat3_info'] = Db::name('category')->where('id','=',$course_info['cat_id3'])->find();
                 $attr = Db::name('cat_attr')->where('cat_id','=',$course_info['cat_id3'])->find();
+                $attr['img'] =  getUrl().$attr['img'];
+                $attr['banner_img'] =  getUrl().$attr['banner_img'];
                 $value['cat3_info']['attr'] = $attr;
 
                 $value['class_start_end_time'] = timetostr($course_info['start_time'],$course_info['end_time']);
