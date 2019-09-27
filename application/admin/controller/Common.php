@@ -21,7 +21,7 @@ class Common extends Base
         $file = request()->file('image');
         if($file){
             //将传入的图片移动到框架应用根目录/public/uploads/ 目录下，ROOT_PATH是根目录下，DS是代表斜杠 /
-            $info = $file->validate(['size'=>$this->size,'ext'=>$this->type])->move(ROOT_PATH . 'public' . DS . 'uploads');
+            $info = $file->validate(['ext'=>$this->type])->move(ROOT_PATH . 'public' . DS . 'uploads');
             if($info){
                 return json(array(
                     'status' => 1,
