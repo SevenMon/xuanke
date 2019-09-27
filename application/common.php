@@ -42,5 +42,13 @@ function getTimeWeek($time, $i = 0) {
 }
 
 function getUrl(){
-
+    return is_ssl().$_SERVER['HTTP_HOST'].DS;
+}
+function is_ssl() {
+    if(isset($_SERVER['HTTPS']) && ('1' == $_SERVER['HTTPS'] || 'on' == strtolower($_SERVER['HTTPS']))){
+        return 'https://';
+    }elseif(isset($_SERVER['SERVER_PORT']) && ('443' == $_SERVER['SERVER_PORT'] )) {
+        return 'http://';
+    }
+    return 'http://';
 }

@@ -27,7 +27,8 @@ class Common extends Base
                     'status' => 1,
                     'msg' => '获取成功',
                     'data' => array(
-                        'path' => $info->getSaveName()
+                        'path' => $info->getSaveName(),
+                        'show_path' => getUrl().$info->getSaveName(),
                     )
                 ));
             }else{
@@ -41,5 +42,4 @@ class Common extends Base
             }
         }
     }
-
 }
