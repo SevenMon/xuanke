@@ -25,19 +25,19 @@ class Student extends Controller
         //检查验证码
         $real_code = cache($str);
         if(empty($real_code)){
-            /*return json(array(
-                'status' => -1,
-                'msg' => '验证码错误，请重新填写！',
-                'data' => array()
-            ));*/
-        }
-        /*if($real_code != $code){
             return json(array(
                 'status' => -1,
                 'msg' => '验证码错误，请重新输入！',
                 'data' => array()
             ));
-        }*/
+        }
+        if($real_code != $code){
+            return json(array(
+                'status' => -1,
+                'msg' => '验证码错误，请重新输入！',
+                'data' => array()
+            ));
+        }
 
         $edu_db = Db::connect(config('edu_database'));
         $db = Db();
@@ -108,7 +108,6 @@ class Student extends Controller
 
     //发送验证码
     public function sendCode(){
-        exit();
         $phone = input('phone','');
         $confirm_phone = preg_match("/^1[34578]\d{9}$/", $phone);
         if(empty($phone) || !$confirm_phone){
@@ -121,28 +120,51 @@ class Student extends Controller
         $edu_db = Db::connect(config('edu_database'));
         $edu_student_info = $edu_db->name('student_baseinfo')->where('stu_phone','=',$phone)->find();
         if(empty($edu_student_info)){
-            return json(array(
+            /*return json(array(
                 'status' => -1,
                 'msg' => '手机号不存在，请输入正确手机号码！',
                 'data' => array()
-            ));
+            ));*/
+        }
+
+        //判断时间
+        $str = encrypt($phone);
+        $data = cache($str);
+        if($data){
+            if(time() - $data['time'] < 60){
+                return json(array(
+                    'status' => -1,
+                    'msg' => '发送频繁，请'.(60 - (time() - $data['time'])).'秒之后再次发送',
+                    'data' => array()
+                ));
+            }
         }
 
         $code = rand(1000,9999);
-        $str = md5(time()).randstr();
+        //$str = md5(time()).randstr();
+        $str = encrypt($phone);
         //TODO 发送短信给用户  验证码
         $alicloud = \think\Loader::model('AliCloud','service');
-        $alicloud->sendLoginCode($phone,$code);
+        $result = $alicloud->sendLoginCode($phone,$code);
+        if($result['code'] == 1){
+            cache($str, array('code'=>$code,'time' => time()), 300);
+            return json(array(
+                'status' => 1,
+                'msg' => '发送成功！',
+                'data' => array(
+                    'str' => $str,
+                )
+            ));
+        }else{
+            return json(array(
+                'status' => 1,
+                'msg' => '发送失败！',
+                'data' => array(
+                    'str' => $str,
+                )
+            ));
+        }
 
-        cache($str, array('code'), 300);
-        return json(array(
-            'status' => 1,
-            'msg' => '发送成功！',
-            'data' => array(
-                'code' => $code,
-                'str' => $str,
-            )
-        ));
     }
 
 }

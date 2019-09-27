@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'accessKeyId' => 123123123,
-    'accessSecret' => 123123123,
+    'accessKeyId' => 'LTAI4FrzWZGLfuz5FG7WECKu',
+    'accessSecret' => 'vXbYe4zY3lGlGr9ypDR4b7uYpUDhmH',
 ];
