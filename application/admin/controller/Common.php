@@ -27,8 +27,8 @@ class Common extends Base
                     'status' => 1,
                     'msg' => '获取成功',
                     'data' => array(
-                        'path' => 'public'.DS . 'uploads'.DS.$info->getSaveName(),
-                        'show_path' => getUrl().'public'.DS . 'uploads'.DS.$info->getSaveName(),
+                        'path' => 'uploads'.DS.$info->getSaveName(),
+                        'show_path' => getUrl(). 'uploads'.DS.$info->getSaveName(),
                     )
                 ));
             }else{
