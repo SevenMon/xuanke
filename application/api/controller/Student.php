@@ -158,7 +158,7 @@ class Student extends Controller
         }else{
             return json(array(
                 'status' => 1,
-                'msg' => '发送失败！',
+                'msg' => $result['msg'],
                 'data' => array(
                     'str' => $str,
                 )
