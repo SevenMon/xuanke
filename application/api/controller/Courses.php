@@ -123,7 +123,7 @@ class Courses extends Base
 
         if(!canbook() && ($result['book_status_code'] == 1 || $result['book_status_code'] == 3)){
             $result['book_status'] = '已过预约时间';
-            $value['status'] = -1;
+            $result['book_status_code'] = -1;
         }
 
         //课程系列
