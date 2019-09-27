@@ -35,6 +35,10 @@ class Books extends Base
                 $value['cat2_info'] = Db::name('category')->where('id','=',$course_info['cat_id2'])->find();
                 $attr = Db::name('cat_attr')->where('cat_id','=',$course_info['cat_id2'])->find();
                 $value['cat2_info']['attr'] = $attr;
+                //课程
+                $value['cat3_info'] = Db::name('category')->where('id','=',$course_info['cat_id3'])->find();
+                $attr = Db::name('cat_attr')->where('cat_id','=',$course_info['cat_id3'])->find();
+                $value['cat3_info']['attr'] = $attr;
 
                 $value['class_start_end_time'] = timetostr($course_info['start_time'],$course_info['end_time']);
                 $value['status_str'] = $this->status[$value['status']];

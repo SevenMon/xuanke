@@ -185,15 +185,18 @@ class Courses extends Base
         }
 
         $teacher_assist_uid = input('teacher_assist_uid','');
-        $teacher_assist_info = $edu_db->name('admin')->where('uid','=',$teacher_assist_uid)->find();
-        if($teacher_assist_info == null){
-            return json(array(
-                'status' => -1,
-                'msg' => '助教老师不存在',
-                'data' => array(
-                )
-            ));
+        if(!empty($teacher_assist_uid)){
+            $teacher_assist_info = $edu_db->name('admin')->where('uid','=',$teacher_assist_uid)->find();
+            if($teacher_assist_info == null){
+                return json(array(
+                    'status' => -1,
+                    'msg' => '助教老师不存在',
+                    'data' => array(
+                    )
+                ));
+            }
         }
+
         $sort = input('sort',0);
         $start_class_people_num = input('start_class_people_num',0);
         $max_people_num = input('max_people_num',0);
@@ -296,15 +299,18 @@ class Courses extends Base
         }
 
         $teacher_assist_uid = input('teacher_assist_uid','');
-        $teacher_assist_info = $edu_db->name('admin')->where('uid','=',$teacher_assist_uid)->find();
-        if($teacher_assist_info == null){
-            return json(array(
-                'status' => -1,
-                'msg' => '助教老师不存在',
-                'data' => array(
-                )
-            ));
+        if(!empty($teacher_assist_uid)){
+            $teacher_assist_info = $edu_db->name('admin')->where('uid','=',$teacher_assist_uid)->find();
+            if($teacher_assist_info == null){
+                return json(array(
+                    'status' => -1,
+                    'msg' => '助教老师不存在',
+                    'data' => array(
+                    )
+                ));
+            }
         }
+
         $sort = input('sort',0);
         $start_class_people_num = input('start_class_people_num',0);
         $max_people_num = input('max_people_num',0);
