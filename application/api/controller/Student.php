@@ -108,6 +108,7 @@ class Student extends Controller
 
     //发送验证码
     public function sendCode(){
+        exit();
         $phone = input('phone','');
         $confirm_phone = preg_match("/^1[34578]\d{9}$/", $phone);
         if(empty($phone) || !$confirm_phone){
@@ -130,8 +131,10 @@ class Student extends Controller
         $code = rand(1000,9999);
         $str = md5(time()).randstr();
         //TODO 发送短信给用户  验证码
+        $alicloud = \think\Loader::model('AliCloud','service');
+        $alicloud->sendLoginCode($phone,$code);
 
-        cache($str, $code, 300);
+        cache($str, array('code'), 300);
         return json(array(
             'status' => 1,
             'msg' => '发送成功！',

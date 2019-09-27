@@ -54,18 +54,18 @@ class Courses extends Base
 
             //课程系列
             $value['cat2_info'] = Db::name('category')->where('id','=',$value['cat_id2'])->find();
-            $attr = Db::name('cat_attr')->where('cat_id','=',$value['cat_id2'])->find();
-            $attr['img'] =  getUrl().$attr['img'];
-            $attr['banner_img'] =  getUrl().$attr['banner_img'];
-            $value['cat2_info']['attr'] =  $attr;
+            $attr2 = Db::name('cat_attr')->where('cat_id','=',$value['cat_id2'])->find();
+            $attr2['img'] =  getUrl().$attr2['img'];
+            $attr2['banner_img'] =  getUrl().$attr2['banner_img'];
+            $value['cat2_info']['attr'] =  $attr2;
 
 
             //课程
             $value['cat3_info'] = Db::name('category')->where('id','=',$value['cat_id3'])->find();
-            $attr = Db::name('cat_attr')->where('cat_id','=',$value['cat_id3'])->find();
-            $attr['img'] =  getUrl().$attr['img'];
-            $attr['banner_img'] =  getUrl().$attr['banner_img'];
-            $value['cat3_info']['attr'] =  $attr;
+            $attr3 = Db::name('cat_attr')->where('cat_id','=',$value['cat_id3'])->find();
+            $attr3['img'] =  getUrl().$attr3['img'];
+            $attr3['banner_img'] =  getUrl().$attr3['banner_img'];
+            $value['cat3_info']['attr'] =  $attr3;
 
 
         }
@@ -133,17 +133,17 @@ class Courses extends Base
 
         //课程系列
         $result['cat2_info'] = Db::name('category')->where('id','=',$course_info['cat_id2'])->find();
-        $attr = Db::name('cat_attr')->where('cat_id','=',$course_info['cat_id2'])->find();
-        $attr['img'] =  getUrl().$attr['img'];
-        $attr['banner_img'] =  getUrl().$attr['banner_img'];
-        $result['cat2_info']['attr'] = $attr;
+        $attr2 = Db::name('cat_attr')->where('cat_id','=',$course_info['cat_id2'])->find();
+        $attr2['img'] =  getUrl().$attr2['img'];
+        $attr2['banner_img'] =  getUrl().$attr2['banner_img'];
+        $result['cat2_info']['attr'] = $attr2;
 
         //课程
         $result['cat3_info'] = Db::name('category')->where('id','=',$course_info['cat_id3'])->find();
-        $attr = Db::name('cat_attr')->where('cat_id','=',$course_info['cat_id3'])->find();
-        $attr['img'] =  getUrl().$attr['img'];
-        $attr['banner_img'] =  getUrl().$attr['banner_img'];
-        $result['cat3_info']['attr'] = $attr;
+        $attr3 = Db::name('cat_attr')->where('cat_id','=',$course_info['cat_id3'])->find();
+        $attr3['img'] =  getUrl().$attr3['img'];
+        $attr3['banner_img'] =  getUrl().$attr3['banner_img'];
+        $result['cat3_info']['attr'] = $attr3;
 
         $result['foot_title'] = '剩余'.($course_info['max_people_num']-$course_info['people_num']).'个名额';
         $result['class_start_end_time'] = timetostr($course_info['start_time'],$course_info['end_time']);
