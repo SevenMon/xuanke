@@ -52,7 +52,7 @@ class Student extends Controller
         if($edu_student_info == null){
             return json(array(
                 'status' => -1,
-                'msg' => '手机号不存在，请输入正确手机号码！',
+                'msg' => '您输入的手机号码不存在，请联系带班老师！',
                 'data' => array()
             ));
         }
@@ -60,7 +60,7 @@ class Student extends Controller
         if($limit_student_info == null){
             return json(array(
                 'status' => -1,
-                'msg' => '该学生，不允许登陆！',
+                'msg' => '您输入的手机号码不存在，请联系带班老师！',
                 'data' => array()
             ));
         }
@@ -137,7 +137,7 @@ class Student extends Controller
         if(empty($edu_student_info)){
             return json(array(
                 'status' => -1,
-                'msg' => '手机号不存在，请输入正确手机号码！',
+                'msg' => '您输入的手机号码不存在，请联系带班老师！',
                 'data' => array()
             ));
         }
@@ -146,7 +146,7 @@ class Student extends Controller
         if($limit_student_info == null){
             return json(array(
                 'status' => -1,
-                'msg' => '该学生，不允许登陆！',
+                'msg' => '您输入的手机号码不存在，请联系带班老师！',
                 'data' => array()
             ));
         }
