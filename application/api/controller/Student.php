@@ -58,7 +58,7 @@ class Student extends Controller
         }
         $sudent_info = $db->name('student')->where('edu_student_id','=',$edu_student_info['id'])->find();
         $token = md5(time()).randstr();
-        if(empty($admin_info)){
+        if(empty($admin_info) || $admin_info == null){
             $data = array(
                 'edu_student_id' => $edu_student_info['id'],
                 'token' => $token
