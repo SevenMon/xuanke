@@ -22,6 +22,7 @@ class Courses extends Base
 
         $where = array();
         $where['status'] = 1;
+        $where['cat_id1'] = $this->limit_student_info['cat_id1'];
         $where['campus_id'] = $this->edu_student_info['campus_id'];
         $course_all_num = Db::name('course')->where($where)->count();
         $course_list = Db::name('course')->where($where)->order('sort desc,id des ')->page($page,$limit)->select();
@@ -89,6 +90,7 @@ class Courses extends Base
         $course_id = input('id');
         $where = array();
         $where['id'] = $course_id;
+        $where['cat_id1'] = $this->limit_student_info['cat_id1'];
         $course_info = Db::name('course')->where($where)->find();
         if(empty($course_info)){
             return json(array(

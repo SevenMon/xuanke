@@ -12,6 +12,7 @@ class Base extends Controller
 {
     public $edu_student_info = '';
     public $student_info = '';
+    public $limit_student_info = '';
 
 
     public function __construct(Request $request = null)
@@ -45,8 +46,18 @@ class Base extends Controller
             ));
             exit();
         }
+        $limit_student_info = Db::name('student_limit')->where(array('edu_student_id' => $edu_student_info['id']))->find();
+        if($limit_student_info == null){
+            echo json_encode(array(
+                'status' => 101,
+                'msg' => '该学生不允许登陆',
+                'data' => array()
+            ));
+            exit();
+        }
         $edu_student_info['campus_info'] = $edu_db->name('campus')->where('id','=',$edu_student_info['campus_id'])->find();
         $this->edu_student_info = $edu_student_info;
+        $this->limit_student_info = $limit_student_info;
     }
 
 

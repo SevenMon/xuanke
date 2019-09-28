@@ -49,10 +49,18 @@ class Student extends Controller
         $edu_db = Db::connect(config('edu_database'));
         $db = Db();
         $edu_student_info = $edu_db->name('student_baseinfo')->where('stu_phone','=',$phone)->find();
-        if(empty($edu_student_info)){
+        if($edu_student_info == null){
             return json(array(
                 'status' => -1,
                 'msg' => '手机号不存在，请输入正确手机号码！',
+                'data' => array()
+            ));
+        }
+        $limit_student_info = Db::name('student_limit')->where(array('edu_student_id' => $edu_student_info['id']))->find();
+        if($limit_student_info == null){
+            return json(array(
+                'status' => -1,
+                'msg' => '该学生，不允许登陆！',
                 'data' => array()
             ));
         }
