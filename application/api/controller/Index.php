@@ -5,6 +5,7 @@ class Index
 {
     public function index()
     {
-        echo 111123;
+        echo getTimeWeek(1569130034);
+        echo date('w',1569130034);
     }
 }

@@ -36,7 +36,7 @@ function timetostr($start_time,$end_time){
 }
 
 function getTimeWeek($time, $i = 0) {
-    $weekarray = array("一", "二", "三", "四", "五", "六", "日");
+    $weekarray = array("日","一", "二", "三", "四", "五", "六");
     $oneD = 24 * 60 * 60;
     return "星期" . $weekarray[date("w", $time + $oneD * $i)];
 }
