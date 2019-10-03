@@ -128,11 +128,6 @@ class Courses extends Base
             $result['book_status_code'] = 3;
         }
 
-        if(!canbook() && ($result['book_status_code'] == 1 || $result['book_status_code'] == 3)){
-            $result['book_status'] = '已过预约时间';
-            $result['book_status_code'] = -1;
-        }
-
         //课程系列
         $result['cat2_info'] = Db::name('category')->where('id','=',$course_info['cat_id2'])->find();
         $attr2 = Db::name('cat_attr')->where('cat_id','=',$course_info['cat_id2'])->find();

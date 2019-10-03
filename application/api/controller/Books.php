@@ -46,10 +46,6 @@ class Books extends Base
 
                 $value['class_start_end_time'] = timetostr($course_info['start_time'],$course_info['end_time']);
                 $value['status_str'] = $this->status[$value['status']];
-                if(!canbook() && ($value['status'] == 1 || $value['status'] == 3)){
-                    $value['status_str'] = '已过预约时间';
-                    $book_list[$key]['status'] = -1;
-                }
             }else{
                 unset($book_list[$key]);
                 continue;
@@ -74,6 +70,14 @@ class Books extends Base
             return json(array(
                 'status' => -1,
                 'msg' => '课程不存在',
+                'data' => array(
+                )
+            ));
+        }
+        if(!canbook()){
+            return json(array(
+                'status' => -1,
+                'msg' => '已过预约时间',
                 'data' => array(
                 )
             ));
@@ -160,6 +164,15 @@ class Books extends Base
             return json(array(
                 'status' => -1,
                 'msg' => '数据错误',
+                'data' => array(
+                )
+            ));
+        }
+
+        if(!canbook()){
+            return json(array(
+                'status' => -1,
+                'msg' => '已过预约时间',
                 'data' => array(
                 )
             ));
