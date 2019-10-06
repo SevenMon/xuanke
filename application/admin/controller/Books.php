@@ -257,7 +257,8 @@ class Books extends Base
                 $value['course_info']['people_num'],
                 $value['edu_student']['stu_name'],
                 $value['edu_student']['stu_phone'],
-                $value['course_info']['teacher_main_info']['username'],
+                //$value['course_info']['teacher_main_info']['username'],
+                $value['edu_student']['stu_age'],
                 $value['status_str']
 
                 /*$value['edu_student']['stu_name'],
