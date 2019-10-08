@@ -96,7 +96,7 @@ class Books extends Base
             $value['course_info'] = $course_info;
             $value['status_str'] = $this->status[$value['status']];
             $student_info = Db::name('student')->where(array('id' => $value['student_id']))->find();
-            $value['edu_student'] = $edu_db->name('student_baseinfo')->where(array('id'=>$student_info['edu_uid']))->find();
+            $value['edu_student'] = $edu_db->name('student_baseinfo')->where(array('id'=>$student_info['edu_student_id']))->find();
         }
         $page = array(
             'all_num' => $course_all_num,
@@ -242,7 +242,7 @@ class Books extends Base
             $value['status_str'] = $this->status[$value['status']];
 
             $student_info = Db::name('student')->where(array('id' => $value['student_id']))->find();
-            $value['edu_student'] = $edu_db->name('student_baseinfo')->where(array('id'=>$student_info['edu_uid']))->find();
+            $value['edu_student'] = $edu_db->name('student_baseinfo')->where(array('id'=>$student_info['edu_student_id']))->find();
             $result_list[] = array(
                 $value['edu_student']['stu_name'],
                 $value['edu_student']['stu_phone'],
