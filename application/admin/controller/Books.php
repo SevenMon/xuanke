@@ -165,7 +165,6 @@ class Books extends Base
         }
 
     }
-
     public function exportList(){
         $edu_db = Db::connect(config('edu_database'));
         $condition = array();
@@ -187,7 +186,6 @@ class Books extends Base
                 }
             }
         }
-
         $course_where = array();
         $start_time = input('start_time','');
         $end_time = input('end_time','');
@@ -206,15 +204,13 @@ class Books extends Base
         if(!empty($cat_id2)){
             $course_where['cat_id3'] = $cat_id3;
         }
-
-        $condition['course_id'] = array('in',$this->campus_arr);
+        //$condition['course_id'] = array('in',$this->campus_arr);
         if(!empty($course_where)){
             $course_id_arr = Db::name('course')->where($course_where)->column('id');
             if(!empty($course_id_arr)){
                 $condition['course_id'] = array('in',array_merge($course_id_arr,$this->campus_arr));
             }
         }
-
         $condition['status'] = array('gt',0);
         $book_list = Db::name('book')->where($condition)->order('id desc')->select();
         $result_list = array();
@@ -235,31 +231,41 @@ class Books extends Base
             $course_info['teacher_assist_info'] = $edu_db->name('admin')->where('uid','=',$course_info['teacher_assist_uid'])->find();
             //校区
             $course_info['campus_info'] = $edu_db->name('campus')->where('id','=',$course_info['campus_id'])->find();
-
             $course_info['start_time_form'] = date('Y-m-d H:i:s',$course_info['start_time']);
             $course_info['end_time_form'] = date('Y-m-d H:i:s',$course_info['end_time']);
             $course_info['time'] = date('Y-m-d',$course_info['start_time']).' '.date('H:i',$course_info['start_time']).'~'.date('H:i',$course_info['end_time']);
             $value['course_info'] = $course_info;
             $value['status_str'] = $this->status[$value['status']];
-
             $student_info = Db::name('student')->where(array('id' => $value['student_id']))->find();
             $value['edu_student'] = $edu_db->name('student_baseinfo')->where(array('id'=>$student_info['edu_student_id']))->find();
+            //校区、课程分类、课程系列、课程名称、开班人数、满班人数、当前人数、学员姓名、手机号、年龄、预约状态
             $result_list[] = array(
+                $value['course_info']['campus_info']['campus_name'],
+                $value['course_info']['cat_id1_info']['name'],
+                $value['course_info']['cat_id2_info']['name'],
+                $value['course_info']['cat_id3_info']['name'],
+                $value['course_info']['start_class_people_num'],
+                $value['course_info']['max_people_num'],
+                $value['course_info']['people_num'],
                 $value['edu_student']['stu_name'],
                 $value['edu_student']['stu_phone'],
-                $value['cat_id1_info']['name'],
-                $value['cat_id2_info']['name'],
-                $value['cat_id3_info']['name'],
-                $value['course_info']['time'],
-                $value['teacher_main_info']['username'],
+                //$value['course_info']['teacher_main_info']['username'],
+                $value['edu_student']['stu_age'],
                 $value['status_str']
+                /*$value['edu_student']['stu_name'],
+                $value['edu_student']['stu_phone'],
+                $value['course_info']['cat_id1_info']['name'],
+                $value['course_info']['cat_id2_info']['name'],
+                $value['course_info']['cat_id3_info']['name'],
+                $value['course_info']['time'],
+                $value['course_info']['teacher_main_info']['username'],
+                $value['status_str']*/
             );
         }
-        $book_list;
         $csv = new Csv();
-        $csv_title = array('学员姓名','学员手机号','课程级别','课程系列','课程','上课时间','教师','到课状态');
+        //$csv_title = array('学员姓名','学员手机号','课程级别','课程系列','课程','上课时间','教师','到课状态');
+        $csv_title = array('校区','课程级别','课程系列','课程名称','开班人数','满班人数','当前人数','学员姓名','手机号','年龄','预约状态');
         $csv->put_csv($result_list,$csv_title);
-
     }
 
 }
