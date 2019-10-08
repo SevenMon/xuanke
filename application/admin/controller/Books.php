@@ -16,10 +16,7 @@ class Books extends Base
     public function __construct(Request $request = null)
     {
         parent::__construct($request);
-
-        if(\request()->action() != 'exportlist'){
-            $this->checkLogin();
-        }
+        $this->checkLogin();
     }
 
     public function bookList(){
@@ -99,7 +96,7 @@ class Books extends Base
             $value['course_info'] = $course_info;
             $value['status_str'] = $this->status[$value['status']];
             $student_info = Db::name('student')->where(array('id' => $value['student_id']))->find();
-            $value['edu_student'] = $edu_db->name('student_baseinfo')->where(array('id'=>$student_info['edu_student_id']))->find();
+            $value['edu_student'] = $edu_db->name('student_baseinfo')->where(array('id'=>$student_info['edu_uid']))->find();
         }
         $page = array(
             'all_num' => $course_all_num,
@@ -151,7 +148,7 @@ class Books extends Base
                 Db::name('course')->where($where)->update(array('people_num' => --$course_info['people_num']));
             }
             return json(array(
-                'status' => -1,
+                'status' => 1,
                 'msg' => '变更成功',
                 'data' => array(
                 )
@@ -209,7 +206,7 @@ class Books extends Base
             $course_where['cat_id3'] = $cat_id3;
         }
 
-        //$condition['course_id'] = array('in',$this->campus_arr);
+        $condition['course_id'] = array('in',$this->campus_arr);
         if(!empty($course_where)){
             $course_id_arr = Db::name('course')->where($course_where)->column('id');
             if(!empty($course_id_arr)){
@@ -245,35 +242,21 @@ class Books extends Base
             $value['status_str'] = $this->status[$value['status']];
 
             $student_info = Db::name('student')->where(array('id' => $value['student_id']))->find();
-            $value['edu_student'] = $edu_db->name('student_baseinfo')->where(array('id'=>$student_info['edu_student_id']))->find();
-            //校区、课程分类、课程系列、课程名称、开班人数、满班人数、当前人数、学员姓名、手机号、年龄、预约状态
+            $value['edu_student'] = $edu_db->name('student_baseinfo')->where(array('id'=>$student_info['edu_uid']))->find();
             $result_list[] = array(
-                $value['course_info']['campus_info']['campus_name'],
-                $value['course_info']['cat_id1_info']['name'],
-                $value['course_info']['cat_id2_info']['name'],
-                $value['course_info']['cat_id3_info']['name'],
-                $value['course_info']['start_class_people_num'],
-                $value['course_info']['max_people_num'],
-                $value['course_info']['people_num'],
                 $value['edu_student']['stu_name'],
                 $value['edu_student']['stu_phone'],
-                //$value['course_info']['teacher_main_info']['username'],
-                $value['edu_student']['stu_age'],
-                $value['status_str']
-
-                /*$value['edu_student']['stu_name'],
-                $value['edu_student']['stu_phone'],
-                $value['course_info']['cat_id1_info']['name'],
-                $value['course_info']['cat_id2_info']['name'],
-                $value['course_info']['cat_id3_info']['name'],
+                $value['cat_id1_info']['name'],
+                $value['cat_id2_info']['name'],
+                $value['cat_id3_info']['name'],
                 $value['course_info']['time'],
-                $value['course_info']['teacher_main_info']['username'],
-                $value['status_str']*/
+                $value['teacher_main_info']['username'],
+                $value['status_str']
             );
         }
+        $book_list;
         $csv = new Csv();
-        //$csv_title = array('学员姓名','学员手机号','课程级别','课程系列','课程','上课时间','教师','到课状态');
-        $csv_title = array('校区','课程级别','课程系列','课程名称','开班人数','满班人数','当前人数','学员姓名','手机号','年龄','预约状态');
+        $csv_title = array('学员姓名','学员手机号','课程级别','课程系列','课程','上课时间','教师','到课状态');
         $csv->put_csv($result_list,$csv_title);
 
     }
