@@ -16,7 +16,9 @@ class Books extends Base
     public function __construct(Request $request = null)
     {
         parent::__construct($request);
-        $this->checkLogin();
+        if(\request()->action() != 'exportlist'){
+            $this->checkLogin();
+        }
     }
 
     public function bookList(){
