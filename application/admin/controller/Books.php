@@ -147,6 +147,7 @@ class Books extends Base
             if($status == 3){
                 Db::name('course')->where($where)->update(array('people_num' => --$course_info['people_num']));
             }
+            Db::commit();
             return json(array(
                 'status' => 1,
                 'msg' => '变更成功',
