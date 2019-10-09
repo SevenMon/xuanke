@@ -36,9 +36,9 @@ class Books extends Base
         if(!empty($student_where)){
             $edu_student_list = $edu_db->name('student_baseinfo')->where($student_where)->select();
             if(!empty($edu_student_list)){
-                $student_id_arr = Db::name('student')->where('edu_student_id',array('in',array_column($edu_student_list,'id')))->column('id');
+                $student_id_arr = Db::name('student')->where(array('edu_student_id'=>array('in',array_column($edu_student_list,'id'))))->column('id');
                 if(!empty($student_id_arr)){
-                    $condition['student'] = array('in',$student_id_arr);
+                    $condition['student_id'] = array('in',$student_id_arr);
                 }
             }
         }
