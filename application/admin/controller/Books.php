@@ -54,7 +54,7 @@ class Books extends Base
             $course_where['cat_id2'] = $cat_id2;
         }
         $cat_id3 = input('cat_id3','');
-        if(!empty($cat_id2)){
+        if(!empty($cat_id3)){
             $course_where['cat_id3'] = $cat_id3;
         }
         $course_where['campus_id'] = array('in',$this->campus_arr);
@@ -197,7 +197,7 @@ class Books extends Base
             $course_where['cat_id2'] = $cat_id2;
         }
         $cat_id3 = input('cat_id3','');
-        if(!empty($cat_id2)){
+        if(!empty($cat_id3)){
             $course_where['cat_id3'] = $cat_id3;
         }
         //$condition['course_id'] = array('in',$this->campus_arr);
