@@ -29,7 +29,7 @@ class Courses extends Base
             $condition['cat_id2'] = $cat_id2;
         }
         $cat_id3 = input('cat_id3','');
-        if(!empty($cat_id2)){
+        if(!empty($cat_id3)){
             $condition['cat_id3'] = $cat_id3;
         }
 
