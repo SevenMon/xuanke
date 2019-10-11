@@ -200,12 +200,10 @@ class Books extends Base
         if(!empty($cat_id3)){
             $course_where['cat_id3'] = $cat_id3;
         }
-        //$condition['course_id'] = array('in',$this->campus_arr);
+        $course_where['campus_id'] = array('in',$this->campus_arr);
         if(!empty($course_where)){
             $course_id_arr = Db::name('course')->where($course_where)->column('id');
-            if(!empty($course_id_arr)){
-                $condition['course_id'] = array('in',array_merge($course_id_arr,$this->campus_arr));
-            }
+            $condition['course_id'] = array('in',$course_id_arr);
         }
         $condition['status'] = array('gt',0);
         $book_list = Db::name('book')->where($condition)->order('id desc')->select();
