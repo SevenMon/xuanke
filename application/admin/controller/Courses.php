@@ -378,12 +378,12 @@ class Courses extends Base
         $edu_db = Db::connect(config('edu_database'));
         $where = array();
         $where['campus_id'] = array('in',$this->campus_arr);
-        $where['post'] = array('in',[4,5]);
         $admin_id_arr = $edu_db->name('admin_campus')->where($where)->column('admin_id');
 
         $where = array();
         $where['state'] = 1;
         $where['uid'] = array('in',array_unique($admin_id_arr));
+        $where['post'] = array('in',[4,5]);
         $teacher_list = $edu_db->name('admin')->where($where)->select();
         return json(array(
             'status' => 1,
