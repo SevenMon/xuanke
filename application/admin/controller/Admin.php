@@ -14,6 +14,16 @@ class Admin extends Controller
 
         $edu_db = Db::connect(config('edu_database'));
         $db = Db();
+
+        $admin_limit = Db::name('admin_limit')->where(array('username' => $username))->find();
+        if($admin_limit == null){
+            return json(array(
+                'status' => -1,
+                'msg' => '该用户没有权限登陆！',
+                'data' => array()
+            ));
+        }
+
         $edu_admin_info = $edu_db->name('admin')->where('username','=',$username)->find();
         if(empty($edu_admin_info)){
             return json(array(

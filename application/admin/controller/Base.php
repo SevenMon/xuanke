@@ -50,7 +50,22 @@ class Base extends Controller
         $this->edu_admin_info = $edu_admin_info;
         $where = array();
         $where['admin_id'] = $edu_admin_info['uid'];
-        $this->campus_arr = $edu_db->name('admin_campus')->where($where)->column('campus_id');
+
+        $admin_limit = Db::name('admin_limit')->where(array('username' => $edu_admin_info['username']))->find();
+        if($admin_limit == null){
+            return json(array(
+                'status' => 101,
+                'msg' => '该用户没有权限登陆！',
+                'data' => array()
+            ));
+        }
+
+        //$this->campus_arr = $edu_db->name('admin_campus')->where($where)->column('campus_id');
+        if(empty($admin_limit['campus_id']) || $admin_limit['campus_id'] == null){
+            $this->campus_arr = $edu_db->name('admin_campus')->where($where)->column('campus_id');
+        }else{
+            $this->campus_arr = [$admin_limit['campus_id']];
+        }
     }
 
 

@@ -11,7 +11,8 @@ class Books extends Base
     public $status = array(
         '1' => '预约成功',
         '2' => '已到课',
-        '3' => '已取消'
+        '3' => '已取消',
+        '4' => '未到课',
     );
     public function __construct(Request $request = null)
     {

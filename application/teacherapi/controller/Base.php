@@ -35,8 +35,8 @@ class Base extends Controller
         $this->teacher_info = $info;
 
         $edu_db = Db::connect(config('edu_database'));
-        $edu_teacjer_info = $edu_db->name('admin')->where('id','=',$info['edu_teacher_uid'])->find();
-        if($edu_teacjer_info == null){
+        $edu_teacher_info = $edu_db->name('admin')->where('id','=',$info['edu_teacher_uid'])->find();
+        if($edu_teacher_info == null){
             echo json_encode(array(
                 'status' => 101,
                 'msg' => '用户不存在请重新登陆',
@@ -44,6 +44,6 @@ class Base extends Controller
             ));
             exit();
         }
-        $this->edu_teacjer_info = $edu_teacjer_info;
+        $this->edu_teacher_info = $edu_teacher_info;
     }
 }
