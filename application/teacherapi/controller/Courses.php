@@ -411,6 +411,36 @@ class Courses extends Base
             ));
         }
         $assess = Db::name('assess')->where(array('course_id' => $id))->find();
+        $assess = array_merge($assess,cache('course_after_assess_info_'.$id));
+        if($assess['question1'] == -1
+            || $assess['question2'] == -1
+            || $assess['question3'] == -1
+            || $assess['question4'] == -1
+            || $assess['question5'] == -1
+            || $assess['question6'] == -1
+            || $assess['question7'] == -1
+            || $assess['question8'] == -1
+            || $assess['question9'] == -1
+            || $assess['question10'] == -1
+            || $assess['question11'] == -1
+            || $assess['question12'] == -1
+            || $assess['question13'] == -1
+            || $assess['question14'] == -1
+            || $assess['question15'] == -1
+            || empty($assess['word1'])
+            || empty($assess['word2'])
+            || empty($assess['word3'])
+            || empty($assess['main_word'])
+            || empty($assess['word_pass'])
+            || empty($assess['word_not_pass'])
+        ){
+            return json(array(
+                'status' => -2,
+                'msg' => '请完善测评之后再阅览测评',
+                'data' => array()
+            ));
+        }
+
 
         $word_pass_student = explode(',',$assess['word_pass']);
         $word_not_pass_student = explode(',',$assess['word_not_pass_student']);
@@ -425,6 +455,24 @@ class Courses extends Base
             $value['student'] = $student_info;
             $value['student']['pass_or'] = in_array($value['student_id'],$word_pass_student)?1:(in_array($value['student_id'],$word_not_pass_student)?2:0);
             $value['edu_student'] = $edu_db->name('student_baseinfo')->where(array('id'=>$student_info['edu_student_id']))->find();
+            $temp_count = 0;
+            for($i=1;$i<=15;$i++){
+                if(in_array($value['student_id'],explode(',',$assess['question'.$i]))){
+                    $temp_count++;
+                }
+            }
+            if($temp_count >=1 && $temp_count <=3){
+                $before_assess = 'D';
+            }elseif ($temp_count >=4 && $temp_count <=7){
+                $before_assess = 'C';
+            }elseif ($temp_count >=8 && $temp_count <=11){
+                $before_assess = 'B';
+            }elseif ($temp_count >=12){
+                $before_assess = 'A';
+            }else{
+                $before_assess = '无评分';
+            }
+            $value['student']['before_assess'] = $before_assess;
         }
 
         return json(array(
@@ -434,6 +482,72 @@ class Courses extends Base
                 'assess' => $assess
             )
         ));
+    }
+
+    public function saveAssess(){
+        $id = input('id','');//课程id
+        $course_model = new Course();
+        $course_info = $course_model->getDetail($id);
+        if(!$course_info){
+            return json(array(
+                'status' => -1,
+                'msg' => '课程不存在',
+                'data' => array()
+            ));
+        }
+
+        if($course_info['teacher_main_uid'] != $this->edu_teacher_info['uid']){
+            return json(array(
+                'status' => -1,
+                'msg' => '该课程，您不能查看',
+                'data' => array()
+            ));
+        }
+        $assess = Db::name('assess')->where(array('course_id' => $id))->find();
+        $assess = array_merge($assess,cache('course_after_assess_info_'.$id));
+        if($assess['question1'] == -1
+            || $assess['question2'] == -1
+            || $assess['question3'] == -1
+            || $assess['question4'] == -1
+            || $assess['question5'] == -1
+            || $assess['question6'] == -1
+            || $assess['question7'] == -1
+            || $assess['question8'] == -1
+            || $assess['question9'] == -1
+            || $assess['question10'] == -1
+            || $assess['question11'] == -1
+            || $assess['question12'] == -1
+            || $assess['question13'] == -1
+            || $assess['question14'] == -1
+            || $assess['question15'] == -1
+            || empty($assess['word1'])
+            || empty($assess['word2'])
+            || empty($assess['word3'])
+            || empty($assess['main_word'])
+            || empty($assess['word_pass'])
+            || empty($assess['word_not_pass'])
+        ){
+            return json(array(
+                'status' => -1,
+                'msg' => '请完善测评之后再阅览测评',
+                'data' => array()
+            ));
+        }
+
+        try{
+            Db::name('assess')->where(array('course_id' => $id))->update($assess);
+            return json(array(
+                'status' => 1,
+                'msg' => '保存成功',
+                'data' => array()
+            ));
+        }catch (Exception $e){
+            return json(array(
+                'status' => -1,
+                'msg' => '保存失败',
+                'data' => array()
+            ));
+        }
     }
 
 }

@@ -257,4 +257,33 @@ class Books extends Base
         $csv->put_csv($result_list,$csv_title);
     }
 
+    //调课  将预约好的课调整到其他的课程
+    public function changeClass(){
+        $book_id_str = input('book_id_str','');
+        if(empty($book_id_str)){
+            return json(array(
+                'status' => -1,
+                'msg' => '参数不完整！',
+                'data' => array(
+                )
+            ));
+        }
+
+        $course_id = input('course_id');
+        try{
+            Db::name('book')->where(array('id' => array('in',explode(',',$book_id_str))))->update(array('course_id' => $course_id));
+            return json(array(
+                'status' => 1,
+                'msg' => '调课成功',
+                'data' => array()
+            ));
+        }catch (Exception $e){
+            return json(array(
+                'status' => -1,
+                'msg' => '调课失败',
+                'data' => array()
+            ));
+        }
+    }
+
 }

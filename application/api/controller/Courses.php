@@ -152,4 +152,75 @@ class Courses extends Base
             'data' => $result
         ));
     }
+
+    public function assess(){
+        $id = input('id','');//课程id
+        $course_model = new Course();
+        $course_info = $course_model->getDetail($id);
+        if(!$course_info){
+            return json(array(
+                'status' => -1,
+                'msg' => '课程不存在',
+                'data' => array()
+            ));
+        }
+
+        $assess = Db::name('assess')->where(array('course_id' => $id))->find();
+        if($assess == null
+            || $assess['question1'] == -1
+            || $assess['question2'] == -1
+            || $assess['question3'] == -1
+            || $assess['question4'] == -1
+            || $assess['question5'] == -1
+            || $assess['question6'] == -1
+            || $assess['question7'] == -1
+            || $assess['question8'] == -1
+            || $assess['question9'] == -1
+            || $assess['question10'] == -1
+            || $assess['question11'] == -1
+            || $assess['question12'] == -1
+            || $assess['question13'] == -1
+            || $assess['question14'] == -1
+            || $assess['question15'] == -1
+            || empty($assess['word1'])
+            || empty($assess['word2'])
+            || empty($assess['word3'])
+            || empty($assess['main_word'])
+            || empty($assess['word_pass'])
+            || empty($assess['word_not_pass'])
+        ){
+            return json(array(
+                'status' => -1,
+                'msg' => '测试结果还没有生成！',
+                'data' => array()
+            ));
+        }
+        $temp_count = 0;
+        for($i=1;$i<=15;$i++){
+            if(in_array($this->student_info['id'],explode(',',$assess['question'.$i]))){
+                $temp_count++;
+            }
+        }
+        if($temp_count >=1 && $temp_count <=3){
+            $before_assess = 'D';
+        }elseif ($temp_count >=4 && $temp_count <=7){
+            $before_assess = 'C';
+        }elseif ($temp_count >=8 && $temp_count <=11){
+            $before_assess = 'B';
+        }elseif ($temp_count >=12){
+            $before_assess = 'A';
+        }else{
+            $before_assess = '无评分';
+        }
+        $assess['before_assess'] = $before_assess;
+
+        return json(array(
+            'status' => 1,
+            'msg' => '获取成功！',
+            'data' => array(
+                'assess' => $assess,
+                'course_info' => $course_info
+            )
+        ));
+    }
 }
