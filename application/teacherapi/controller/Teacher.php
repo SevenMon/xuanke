@@ -58,7 +58,7 @@ class Teacher extends Controller
             $data = array(
                 'token' => $token
             );
-            $db->name('teacher')->where('edu_steacher_uid','=',$edu_teacher_info['uid'])->update($data);
+            $db->name('teacher')->where('edu_teacher_uid','=',$edu_teacher_info['uid'])->update($data);
             $uid = $teacher_info['id'];
         }
         return json(array(

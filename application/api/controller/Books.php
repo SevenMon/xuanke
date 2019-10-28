@@ -75,6 +75,14 @@ class Books extends Base
                 )
             ));
         }
+        if($course_info['start_time'] > time()){
+            return json(array(
+                'status' => -1,
+                'msg' => '该课程已开始，不能进行操作',
+                'data' => array(
+                )
+            ));
+        }
         if(!canbook()){
             return json(array(
                 'status' => -1,
@@ -182,6 +190,14 @@ class Books extends Base
         $where = array();
         $where['id'] = $book_info['course_id'];
         $course_info = Db::name('course')->where($where)->find();
+        if($course_info['start_time'] > time()){
+            return json(array(
+                'status' => -1,
+                'msg' => '该课程已开始，不能进行操作',
+                'data' => array(
+                )
+            ));
+        }
         if(empty($course_info)){
             return json(array(
                 'status' => -1,

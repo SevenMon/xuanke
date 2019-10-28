@@ -24,6 +24,7 @@ class Courses extends Base
         $where['status'] = 1;
         $where['cat_id1'] = $this->limit_student_info['cat_id1'];
         $where['campus_id'] = $this->edu_student_info['campus_id'];
+        $where['start_time'] = array('gt',time());
         $course_all_num = Db::name('course')->where($where)->count();
         $course_list = Db::name('course')->where($where)->order('sort desc,id des ')->page($page,$limit)->select();
 
