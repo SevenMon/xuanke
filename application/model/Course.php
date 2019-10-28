@@ -2,11 +2,12 @@
 namespace app\model;
 
 use think\Model;
+use think\Db;
 
 class Course extends Model
 {
     public function getDetail($id){
-        $course_info = $this->where(array('id' => $id))->find();
+        $course_info = $this->where(array('id' => $id))->find()->toArray();
         if($course_info == null){
             return false;
         }

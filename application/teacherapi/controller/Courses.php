@@ -44,14 +44,14 @@ class Courses extends Base
         $end_time = strtotime("+1 month",strtotime($year.'-'.$month.'-01'));
 
         $where = array();
-        $where['max_people_num'] = $this->edu_teacher_info['uid'];
+        $where['teacher_main_uid'] = $this->edu_teacher_info['uid'];
         $where['start_time'] = array('between',array($begin_time,$end_time));
         $where['status'] = 1;
         $course_all_num = Db::name('course')->where($where)->count();
         $course_list = Db::name('course')->where($where)->order('start_time desc')->page($page,$limit)->select();
         $course_model = new Course();
-        foreach ($course_list as &$value){
-            $value = $course_model->getDetail($value['id']);
+        foreach ($course_list as $key => $value){
+            $course_list[$key] = $course_model->getDetail($value['id']);
         }
 
         $result['course_list'] = $course_list;
@@ -69,7 +69,8 @@ class Courses extends Base
 
     }
 
-    public function detail()
+    //签到详情
+    public function signInIndex()
     {
         $id = input('id','');
         $course_model = new Course();
@@ -110,7 +111,7 @@ class Courses extends Base
         ));
     }
 
-    public function changeBookStatus(){
+    public function signIn(){
         $id = input('id','');//课程id
         $student_id = input('student_id','');  //逗号分割
         $status = input('status','');
@@ -118,6 +119,13 @@ class Courses extends Base
             return json(array(
                 'status' => -1,
                 'msg' => '参数不完整',
+                'data' => array()
+            ));
+        }
+        if(!in_array($status,[2,4])){
+            return json(array(
+                'status' => -1,
+                'msg' => 'status错误',
                 'data' => array()
             ));
         }
@@ -155,14 +163,14 @@ class Courses extends Base
         }catch (Exception $e){
             return json(array(
                 'status' => -1,
-                'msg' => '修改失败',
+                'msg' => '操作失败',
                 'data' => array()
             ));
         }
 
     }
 
-    public function beforeClassIndex()
+    public function classMiddleIndex()
     {
         $id = input('id','');//课程id
         $course_model = new Course();
@@ -193,7 +201,7 @@ class Courses extends Base
         ));
     }
 
-    public function beforeClassDetail()
+    public function classMiddleDetail()
     {
         $id = input('id','');//课程id
         $question_num = input('question_num',1);
@@ -221,7 +229,7 @@ class Courses extends Base
 
         $where = array();
         $where['course_id'] = $course_info['id'];
-        $where['status'] = 4;
+        $where['status'] = 2;
         $book_list = Db::name('book')->where($where)->order('create_at desc')->select();
         $edu_db = Db::connect(config('edu_database'));
         foreach ($book_list as $key => &$value){
@@ -242,7 +250,7 @@ class Courses extends Base
         ));
     }
 
-    public function beforeClassAssess()
+    public function classMiddleAssess()
     {
         $id = input('id','');//课程id
         $question_num = input('question_num','');
@@ -282,7 +290,7 @@ class Courses extends Base
 
 
 
-    public function afterClassIndex()
+    public function classAfterIndex()
     {
         $id = input('id','');//课程id
         $course_model = new Course();
@@ -329,7 +337,7 @@ class Courses extends Base
         ));
     }
 
-    public function afterClassAssess()
+    public function classAfterAssess()
     {
         $word1 = input('word1','');
         $word2 = input('word2','');
