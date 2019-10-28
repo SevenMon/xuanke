@@ -314,11 +314,11 @@ class Courses extends Base
         $assess = Db::name('assess')->where(array('course_id' => $id))->find();
 
         $word_pass_student = explode(',',$assess['word_pass']);
-        $word_not_pass_student = explode(',',$assess['word_not_pass_student']);
+        $word_not_pass_student = explode(',',$assess['word_not_pass']);
 
         $where = array();
         $where['course_id'] = $course_info['id'];
-        $where['status'] = 4;
+        $where['status'] = 2;
         $book_list = Db::name('book')->where($where)->order('create_at desc')->select();
         $edu_db = Db::connect(config('edu_database'));
         foreach ($book_list as $key => &$value){
@@ -332,7 +332,8 @@ class Courses extends Base
             'status' => 1,
             'msg' => '操作成功',
             'data' => array(
-                'assess' => $assess
+                'assess' => $assess,
+                'book_list' => $book_list
             )
         ));
     }
@@ -345,7 +346,7 @@ class Courses extends Base
         $main_word = input('main_word','');
         $word_pass_student_str = input('word_pass_student_str','');//逗号隔开
         $word_not_pass_student_str = input('word_not_pass_student_str','');//逗号隔开
-        if(empty($word1) || empty($word2) || empty($word3) || empty($marin_word)){
+        if(empty($word1) || empty($word2) || empty($word3) || empty($main_word)){
             return json(array(
                 'status' => -1,
                 'msg' => '参数不完整',
@@ -451,11 +452,11 @@ class Courses extends Base
 
 
         $word_pass_student = explode(',',$assess['word_pass']);
-        $word_not_pass_student = explode(',',$assess['word_not_pass_student']);
+        $word_not_pass_student = explode(',',$assess['word_not_pass']);
 
         $where = array();
         $where['course_id'] = $course_info['id'];
-        $where['status'] = 4;
+        $where['status'] = 2;
         $book_list = Db::name('book')->where($where)->order('create_at desc')->select();
         $edu_db = Db::connect(config('edu_database'));
         foreach ($book_list as $key => &$value){
@@ -487,7 +488,8 @@ class Courses extends Base
             'status' => 1,
             'msg' => '操作成功',
             'data' => array(
-                'assess' => $assess
+                'assess' => $assess,
+                'book_list' => $book_list,
             )
         ));
     }
@@ -544,6 +546,7 @@ class Courses extends Base
 
         try{
             Db::name('assess')->where(array('course_id' => $id))->update($assess);
+            cache('course_after_assess_info_'.$id,array());
             return json(array(
                 'status' => 1,
                 'msg' => '保存成功',
