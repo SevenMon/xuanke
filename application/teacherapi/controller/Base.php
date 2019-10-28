@@ -35,7 +35,7 @@ class Base extends Controller
         $this->teacher_info = $info;
 
         $edu_db = Db::connect(config('edu_database'));
-        $edu_teacher_info = $edu_db->name('admin')->where('id','=',$info['edu_teacher_uid'])->find();
+        $edu_teacher_info = $edu_db->name('admin')->where('uid','=',$info['edu_teacher_uid'])->find();
         if($edu_teacher_info == null){
             echo json_encode(array(
                 'status' => 101,

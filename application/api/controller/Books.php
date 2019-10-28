@@ -75,7 +75,7 @@ class Books extends Base
                 )
             ));
         }
-        if($course_info['start_time'] > time()){
+        if($course_info['start_time'] < time()){
             return json(array(
                 'status' => -1,
                 'msg' => '该课程已开始，不能进行操作',
