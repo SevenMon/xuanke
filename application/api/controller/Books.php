@@ -286,8 +286,6 @@ class Books extends Base
             || empty($assess['word2'])
             || empty($assess['word3'])
             || empty($assess['main_word'])
-            || empty($assess['word_pass'])
-            || empty($assess['word_not_pass'])
         ){
             return json(array(
                 'status' => -1,
