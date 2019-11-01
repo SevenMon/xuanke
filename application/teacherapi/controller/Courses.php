@@ -224,7 +224,7 @@ class Courses extends Base
         }
 
         $assess = Db::name('assess')->field('question'.$question_num)->where(array('course_id' => $id))->find();
-        $question_detail = $assess['question'.$question_num] == -1 ? [] : explode($assess['question'.$question_num]);
+        $question_detail = $assess['question'.$question_num] == -1 ? [] : explode(',',$assess['question'.$question_num]);
         $question_content = $this->question_content[$question_num];
 
         $where = array();

@@ -292,7 +292,9 @@ class Books extends Base
             return json(array(
                 'status' => -1,
                 'msg' => '测试结果还没有生成！',
-                'data' => array()
+                'data' => array(
+                    'course_info' => $course_info
+                )
             ));
         }
         $temp_count = 0;
