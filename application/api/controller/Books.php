@@ -267,7 +267,7 @@ class Books extends Base
 
         $assess = Db::name('assess')->where(array('course_id' => $id))->find();
         if($assess == null
-            || $assess['question1'] == -1
+            /*|| $assess['question1'] == -1
             || $assess['question2'] == -1
             || $assess['question3'] == -1
             || $assess['question4'] == -1
@@ -281,14 +281,14 @@ class Books extends Base
             || $assess['question12'] == -1
             || $assess['question13'] == -1
             || $assess['question14'] == -1
-            || $assess['question15'] == -1
+            || $assess['question15'] == -1*/
             || empty($assess['word1'])
             || empty($assess['word2'])
             || empty($assess['word3'])
             || empty($assess['main_word'])
         ){
             return json(array(
-                'status' => -1,
+                'status' => -2,
                 'msg' => '测试结果还没有生成！',
                 'data' => array(
                     'course_info' => $course_info
