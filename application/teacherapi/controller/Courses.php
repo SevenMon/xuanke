@@ -421,7 +421,7 @@ class Courses extends Base
         }
         $assess = Db::name('assess')->where(array('course_id' => $id))->find();
         $assess = array_merge($assess,cache('course_after_assess_info_'.$id));
-        if($assess['question1'] == -1
+        if(/*$assess['question1'] == -1
             || $assess['question2'] == -1
             || $assess['question3'] == -1
             || $assess['question4'] == -1
@@ -435,8 +435,8 @@ class Courses extends Base
             || $assess['question12'] == -1
             || $assess['question13'] == -1
             || $assess['question14'] == -1
-            || $assess['question15'] == -1
-            || empty($assess['word1'])
+            || $assess['question15'] == -1*/
+             empty($assess['word1'])
             || empty($assess['word2'])
             || empty($assess['word3'])
             || empty($assess['main_word'])
@@ -513,7 +513,7 @@ class Courses extends Base
         }
         $assess = Db::name('assess')->where(array('course_id' => $id))->find();
         $assess = array_merge($assess,cache('course_after_assess_info_'.$id));
-        if($assess['question1'] == -1
+        if(/*$assess['question1'] == -1
             || $assess['question2'] == -1
             || $assess['question3'] == -1
             || $assess['question4'] == -1
@@ -527,14 +527,14 @@ class Courses extends Base
             || $assess['question12'] == -1
             || $assess['question13'] == -1
             || $assess['question14'] == -1
-            || $assess['question15'] == -1
-            || empty($assess['word1'])
+            || $assess['question15'] == -1*/
+             empty($assess['word1'])
             || empty($assess['word2'])
             || empty($assess['word3'])
             || empty($assess['main_word'])
         ){
             return json(array(
-                'status' => -1,
+                'status' => -2,
                 'msg' => '请完善测评之后再阅览测评',
                 'data' => array()
             ));
