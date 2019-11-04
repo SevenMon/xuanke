@@ -317,6 +317,10 @@ class Books extends Base
                     'after_cat3_name' => $after['cat_id3_info']['name'],
                     'after_class_time' => date('Y-m-d',$after['course_info']['start_time']).' '.date('H:i',$after['course_info']['start_time']).'~'.date('H:i',$after['course_info']['end_time']),
                     'after_teacher_name' => $after['account_name'],
+                    'make_time' => time(),
+                    'make_admin_id' => $this->admin_info['id'],
+                    'make_admin_uid' => $this->admin_info['edu_uid'],
+                    'make_admin_name' => $this->edu_admin_info['account_name']
                 );
                 Db::name('change_class')->insert($data);
 
@@ -339,4 +343,97 @@ class Books extends Base
         }
     }
 
+    //调课详情
+    public function changeClassDetail(){
+        $edu_db = Db::connect(config('edu_database'));
+        $condition = array();
+        $student_where = array();
+        $student_name = input('student_name','');
+        if(!empty($student_name)){
+            $student_where['stu_name'] = array('like','%'.$student_name.'%');
+        }
+        $phone = input('phone','');
+        if(!empty($phone)){
+            $student_where['stu_phone'] = array('like','%'.$phone.'%');
+        }
+        if(!empty($student_where)){
+            $edu_student_list = $edu_db->name('student_baseinfo')->where($student_where)->select();
+            $student_id_arr = Db::name('student')->where(array('edu_student_id'=>array('in',array_column($edu_student_list,'id'))))->column('id');
+            $condition['student_id'] = array('in',$student_id_arr);
+        }
+        $start_time = input('start_time','');
+        $end_time = input('end_time','');
+        if(!empty($end_time) && !empty($end_time)){
+            $course['make_time'] = array('between',array(strtotime($start_time),strtotime($end_time)));
+        }
+        $page = input('page',1);
+        $limit = config('admin_page_limit');
+        $change_class_num = Db::name('change_class')->where($condition)->count();
+        $change_class_list = Db::name('change_class')->where($condition)->order('id desc')->page($page,$limit)->select();
+        $page = array(
+            'all_num' => $change_class_num,
+            'limit' => $limit,
+            'current_page' => $page,
+            'all_page' => ceil($change_class_num/$limit),
+        );
+        return json(array(
+            'status' => 1,
+            'msg' => '获取成功',
+            'data' => array(
+                'book_list' => $change_class_list,
+                'page' => $page,
+            )
+        ));
+    }
+
+
+    //调课详情
+    public function changeClassDetailExport(){
+        $edu_db = Db::connect(config('edu_database'));
+        $condition = array();
+        $student_where = array();
+        $student_name = input('student_name','');
+        if(!empty($student_name)){
+            $student_where['stu_name'] = array('like','%'.$student_name.'%');
+        }
+        $phone = input('phone','');
+        if(!empty($phone)){
+            $student_where['stu_phone'] = array('like','%'.$phone.'%');
+        }
+        if(!empty($student_where)){
+            $edu_student_list = $edu_db->name('student_baseinfo')->where($student_where)->select();
+            $student_id_arr = Db::name('student')->where(array('edu_student_id'=>array('in',array_column($edu_student_list,'id'))))->column('id');
+            $condition['student_id'] = array('in',$student_id_arr);
+        }
+        $start_time = input('start_time','');
+        $end_time = input('end_time','');
+        if(!empty($end_time) && !empty($end_time)){
+            $course['make_time'] = array('between',array(strtotime($start_time),strtotime($end_time)));
+        }
+        $change_class_list = Db::name('change_class')->where($condition)->order('id desc')->select();
+        $result_list = array();
+        foreach ($change_class_list as $value){
+            $result_list[] = array(
+                $value['student_name'],
+                $value['student_phone'],
+                $value['before_cat1_name'],
+                $value['before_cat2_name'],
+                $value['before_cat3_name'],
+                $value['before_class_time'],
+                $value['before_teacher_name'],
+                $value['after_cat1_name'],
+                $value['after_cat2_name'],
+                $value['after_cat3_name'],
+                $value['after_class_time'],
+                $value['after_teacher_name'],
+                date('Y-m-d H:s:i',$value['make_time']),
+                $value['make_admin_name'],
+            );
+        }
+
+        $csv = new Csv();
+        $csv_title = array('学员姓名','学员手机号','原课程级别','原课程系列','原课程','上课时间','教师',
+            '调整后课程级别','调整后课程系列','调整后课程','上课时间','教师','操作时间','操作人');
+        $csv->put_csv($result_list,$csv_title);
+    }
 }
