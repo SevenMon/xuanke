@@ -270,14 +270,67 @@ class Books extends Base
         }
 
         $course_id = input('course_id');
+        $edu_db = Db::connect(config('edu_database'));
+        Db::startTrans();
         try{
+            //记录调课详情
+            //变更后的课程信息
+            $after['course_info'] = Db::name('course')->where(array('id' => $course_id))->find();
+            //级别
+            $after['cat_id1_info'] = Db::name('category')->where('id','=',$after['course_info']['cat_id1'])->find();
+            //课程系列
+            $after['cat_id2_info'] = Db::name('category')->where('id','=',$after['course_info']['cat_id2'])->find();
+            //课程
+            $after['cat_id3_info'] = Db::name('category')->where('id','=',$after['course_info']['cat_id3'])->find();
+            //主教
+            $after['teacher_main_info'] = $edu_db->name('admin')->where('uid','=',$after['course_info']['teacher_main_uid'])->find();
+
+            $book_list = Db::name('book')->where(array('id' => array('in',explode(',',$book_id_str))))->select();
+            foreach ($book_list as $value){
+                $student_info = Db::name('student')->where(array('id' => $value['student_id']))->find();
+                $edu_student_info = $edu_db->name('student_baseinfo')->where(array('id' => $student_info['edu_student_id']))->find();
+                $before = array();
+                $before['course_info'] = Db::name('course')->where(array('id' => $value['course_id']))->find();
+                //级别
+                $before['cat_id1_info'] = Db::name('category')->where('id','=',$before['course_info']['cat_id1'])->find();
+                //课程系列
+                $before['cat_id2_info'] = Db::name('category')->where('id','=',$before['course_info']['cat_id2'])->find();
+                //课程
+                $before['cat_id3_info'] = Db::name('category')->where('id','=',$before['course_info']['cat_id3'])->find();
+                //主教
+                $before['teacher_main_info'] = $edu_db->name('admin')->where('uid','=',$before['course_info']['teacher_main_uid'])->find();
+
+                $data = array(
+                    'student_id' => $student_info['id'],
+                    'edu_student_id' => $student_info['edu_student_id'],
+                    'student_phone' => $value['student_phone'],
+                    'student_name' => $edu_student_info['stu_name'],
+                    'before_course_id' => $value['course_id'],
+                    'before_cat1_name' => $before['cat_id1_info']['name'],
+                    'before_cat2_name' => $before['cat_id2_info']['name'],
+                    'before_cat3_name' => $before['cat_id3_info']['name'],
+                    'before_class_time' => date('Y-m-d',$before['course_info']['start_time']).' '.date('H:i',$before['course_info']['start_time']).'~'.date('H:i',$before['course_info']['end_time']),
+                    'before_teacher_name' => $before['account_name'],
+                    'after_course_id' => $course_id,
+                    'after_cat1_name' => $after['cat_id1_info']['name'],
+                    'after_cat2_name' => $after['cat_id2_info']['name'],
+                    'after_cat3_name' => $after['cat_id3_info']['name'],
+                    'after_class_time' => date('Y-m-d',$after['course_info']['start_time']).' '.date('H:i',$after['course_info']['start_time']).'~'.date('H:i',$after['course_info']['end_time']),
+                    'after_teacher_name' => $after['account_name'],
+                );
+                Db::name('change_class')->insert($data);
+
+            }
+
             Db::name('book')->where(array('id' => array('in',explode(',',$book_id_str))))->update(array('course_id' => $course_id));
+            Db::commit();
             return json(array(
                 'status' => 1,
                 'msg' => '调课成功',
                 'data' => array()
             ));
         }catch (Exception $e){
+            Db::rollback();
             return json(array(
                 'status' => -1,
                 'msg' => '调课失败',
