@@ -272,7 +272,7 @@ class Books extends Base
         $course_id = input('course_id');
         $edu_db = Db::connect(config('edu_database'));
         Db::startTrans();
-        //try{
+        try{
             //记录调课详情
             //变更后的课程信息
             $after['course_info'] = Db::name('course')->where(array('id' => $course_id))->find();
@@ -333,14 +333,14 @@ class Books extends Base
                 'msg' => '调课成功',
                 'data' => array()
             ));
-        //}catch (Exception $e){
+        }catch (Exception $e){
             Db::rollback();
             return json(array(
                 'status' => -1,
                 'msg' => '调课失败',
                 'data' => array()
             ));
-        //}
+        }
     }
 
     //调课详情
