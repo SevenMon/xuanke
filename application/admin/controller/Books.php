@@ -272,7 +272,7 @@ class Books extends Base
         $course_id = input('course_id');
         $edu_db = Db::connect(config('edu_database'));
         Db::startTrans();
-        try{
+        //try{
             //记录调课详情
             //变更后的课程信息
             $after['course_info'] = Db::name('course')->where(array('id' => $course_id))->find();
@@ -310,13 +310,13 @@ class Books extends Base
                     'before_cat2_name' => $before['cat_id2_info']['name'],
                     'before_cat3_name' => $before['cat_id3_info']['name'],
                     'before_class_time' => date('Y-m-d',$before['course_info']['start_time']).' '.date('H:i',$before['course_info']['start_time']).'~'.date('H:i',$before['course_info']['end_time']),
-                    'before_teacher_name' => $before['account_name'],
+                    'before_teacher_name' => $before['teacher_main_info']['account_name'],
                     'after_course_id' => $course_id,
                     'after_cat1_name' => $after['cat_id1_info']['name'],
                     'after_cat2_name' => $after['cat_id2_info']['name'],
                     'after_cat3_name' => $after['cat_id3_info']['name'],
                     'after_class_time' => date('Y-m-d',$after['course_info']['start_time']).' '.date('H:i',$after['course_info']['start_time']).'~'.date('H:i',$after['course_info']['end_time']),
-                    'after_teacher_name' => $after['account_name'],
+                    'after_teacher_name' => $after['teacher_main_info']['account_name'],
                     'make_time' => time(),
                     'make_admin_id' => $this->admin_info['id'],
                     'make_admin_uid' => $this->admin_info['edu_uid'],
@@ -333,14 +333,14 @@ class Books extends Base
                 'msg' => '调课成功',
                 'data' => array()
             ));
-        }catch (Exception $e){
+        //}catch (Exception $e){
             Db::rollback();
             return json(array(
                 'status' => -1,
                 'msg' => '调课失败',
                 'data' => array()
             ));
-        }
+        //}
     }
 
     //调课详情
