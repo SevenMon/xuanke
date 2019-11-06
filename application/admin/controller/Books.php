@@ -56,7 +56,9 @@ class Books extends Base
         if(!empty($cat_id3)){
             $course_where['cat_id3'] = $cat_id3;
         }
-        $course_where['campus_id'] = array('in',$this->campus_arr);
+        if($this->campus_arr){
+            $course_where['campus_id'] = array('in',$this->campus_arr);
+        }
         if(!empty($course_where)){
             $course_id_arr = Db::name('course')->where($course_where)->column('id');
             $condition['course_id'] = array('in',$course_id_arr);
@@ -195,7 +197,9 @@ class Books extends Base
         if(!empty($cat_id3)){
             $course_where['cat_id3'] = $cat_id3;
         }
-        $course_where['campus_id'] = array('in',$this->campus_arr);
+        if($this->campus_arr){
+            $course_where['campus_id'] = array('in',$this->campus_arr);
+        }
         if(!empty($course_where)){
             $course_id_arr = Db::name('course')->where($course_where)->column('id');
             $condition['course_id'] = array('in',$course_id_arr);

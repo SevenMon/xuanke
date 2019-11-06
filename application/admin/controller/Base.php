@@ -13,6 +13,7 @@ class Base extends Controller
     public $edu_admin_info = '';
     public $admin_info = '';
     public $campus_arr = '';
+    public $create_course_campus = '';
 
 
     public function __construct(Request $request = null)
@@ -52,7 +53,7 @@ class Base extends Controller
         $where['admin_id'] = $edu_admin_info['uid'];
 
         $admin_limit = Db::name('admin_limit')->where(array('username' => $edu_admin_info['username']))->find();
-        if($admin_limit == null){
+        if($admin_limit == null || !$admin_limit['campus_id']){
             return json(array(
                 'status' => 101,
                 'msg' => '该用户没有权限登陆！',
@@ -60,12 +61,14 @@ class Base extends Controller
             ));
         }
 
-        //$this->campus_arr = $edu_db->name('admin_campus')->where($where)->column('campus_id');
-        if(empty($admin_limit['campus_id']) || $admin_limit['campus_id'] == null){
+        $this->create_course_campus = $admin_limit['campus_id'];
+        $this->campus_arr = $admin_limit['view_campus_id']?explode(',',$admin_limit['view_campus_id']):"";
+
+        /*if(empty($admin_limit['campus_id']) || $admin_limit['campus_id'] == null){
             $this->campus_arr = $edu_db->name('admin_campus')->where($where)->column('campus_id');
         }else{
             $this->campus_arr = [$admin_limit['campus_id']];
-        }
+        }*/
     }
 
 

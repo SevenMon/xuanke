@@ -19,7 +19,9 @@ class Courses extends Base
         $limit = config('admin_page_limit');
         $condition = array();
         $condition['status'] = array('neq',0);
-        $condition['campus_id'] = array('in',$this->campus_arr);
+        if($this->campus_arr){
+            $condition['campus_id'] = array('in',$this->campus_arr);
+        }
         $cat_id1 = input('cat_id1','');
         if(!empty($cat_id1)){
             $condition['cat_id1'] = $cat_id1;
@@ -81,7 +83,9 @@ class Courses extends Base
         $where = array();
         $where['id'] = $course_id;
         $where['status'] = array('neq',0);
-        $where['campus_id'] = array('in',$this->campus_arr);
+        if($this->campus_arr){
+            $where['campus_id'] = array('in',$this->campus_arr);
+        }
         $course_info = Db::name('course')->where($where)->find();
         if(empty($course_info)){
             return json(array(
@@ -227,7 +231,10 @@ class Courses extends Base
         $course_id = input('id');
         $where = array();
         $where['status'] = array('neq',0);
-        $where['campus_id'] = array('in',$this->campus_arr);
+
+        if($this->campus_arr){
+            $where['campus_id'] = array('in',$this->campus_arr);
+        }
         $where['id'] = $course_id;
         $course_info = Db::name('course')->where($where)->find();
         if(empty($course_info)){
@@ -322,7 +329,7 @@ class Courses extends Base
             'end_time' => $end_time,
             'teacher_main_uid' => $teacher_main_uid,
             'teacher_assist_uid' => $teacher_assist_uid,
-            'campus_id' => $this->campus_arr[0],
+            'campus_id' => $this->create_course_campus,
             'sort' => $sort,
             'start_class_people_num' => $start_class_people_num,
             'max_people_num' => $max_people_num,
@@ -347,7 +354,9 @@ class Courses extends Base
         $course_id = input('id');
         $where = array();
         $where['status'] = array('neq',0);
-        $where['campus_id'] = array('in',$this->campus_arr);
+        if($this->campus_arr){
+            $where['campus_id'] = array('in',$this->campus_arr);
+        }
         $where['id'] = $course_id;
         $course_info = Db::name('course')->where($where)->find();
         if(empty($course_info)){
@@ -377,7 +386,9 @@ class Courses extends Base
     public function getTeacherList(){
         $edu_db = Db::connect(config('edu_database'));
         $where = array();
-        $where['campus_id'] = array('in',$this->campus_arr);
+        if($this->campus_arr){
+            $where['campus_id'] = array('in',$this->campus_arr);
+        }
         $admin_id_arr = $edu_db->name('admin_campus')->where($where)->column('admin_id');
 
         $where = array();
