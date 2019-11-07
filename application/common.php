@@ -54,7 +54,12 @@ function is_ssl() {
 }
 
 function canbook(){
-    return true;
+    $canbook = \think\Db::name('config')->where(array('key' => 'can_book'))->find();
+    if($canbook && $canbook['value'] && $canbook['value'] == 2){
+        return true;
+    }else{
+        return false;
+    }
 }
 
 
