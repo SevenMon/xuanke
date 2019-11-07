@@ -31,7 +31,7 @@ class Config extends Base{
         ));
     }
 
-    public function setVlue(){
+    public function setValue(){
         $key = input('key','');
         $value = input('value','');
         $config_item = Db::name('config')->where(array('key' => $key))->find();
