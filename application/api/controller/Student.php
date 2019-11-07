@@ -23,7 +23,7 @@ class Student extends Controller
             ));
         }
         //检查验证码
-        /*$real_code = cache($str);
+        $real_code = cache($str);
         if(empty($real_code)){
             return json(array(
                 'status' => -1,
@@ -44,7 +44,7 @@ class Student extends Controller
                 'msg' => '验证码错误，请重新输入！',
                 'data' => array()
             ));
-        }*/
+        }
 
         $edu_db = Db::connect(config('edu_database'));
         $db = Db();
@@ -169,8 +169,7 @@ class Student extends Controller
         $str = encrypt($phone);
         //TODO 发送短信给用户  验证码
         $alicloud = \think\Loader::model('AliCloud','service');
-        //$result = $alicloud->sendLoginCode($phone,$code);
-        //测试
+        $result = $alicloud->sendLoginCode($phone,$code);
         $result['code'] = 1;
         if($result['code'] == 1){
             cache($str, array('code'=>$code,'time' => time()), 300);
