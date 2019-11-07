@@ -309,6 +309,7 @@ class Books extends Base
                     'edu_student_id' => $student_info['edu_student_id'],
                     'student_phone' => $value['student_phone'],
                     'student_name' => $edu_student_info['stu_name'],
+                    'book_id' => $value['id'],
                     'before_course_id' => $value['course_id'],
                     'before_cat1_name' => $before['cat_id1_info']['name'],
                     'before_cat2_name' => $before['cat_id2_info']['name'],
