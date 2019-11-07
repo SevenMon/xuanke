@@ -11,6 +11,26 @@ use think\Db;
 use think\Exception;
 
 class Config extends Base{
+
+    public function getValue(){
+        $key = input('key','');
+        $config_item = Db::name('config')->where(array('key' => $key))->find();
+        if($config_item == null || empty($config_item)){
+            return json(array(
+                'status' => -1,
+                'msg' => '参数错误！',
+                'data' => array()
+            ));
+        }
+        return json(array(
+            'status' => 1,
+            'msg' => '获取成功！',
+            'data' => array(
+                'data' => $config_item
+            )
+        ));
+    }
+
     public function setVlue(){
         $key = input('key','');
         $value = input('value','');

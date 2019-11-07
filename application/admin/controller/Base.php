@@ -20,7 +20,7 @@ class Base extends Controller
     {
         parent::__construct($request);
         //检查登陆
-        //$this->checkLogin();
+        $this->checkLogin();
 
     }
 
