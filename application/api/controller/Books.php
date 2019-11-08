@@ -22,10 +22,13 @@ class Books extends Base
     }
 
     public function bookList(){
+        $page = input('page',1);
+        $limit = config('api_page_limit');
         $where = array();
         $where['student_id'] = $this->student_info['id'];
         $where['status'] = array('gt',0);
-        $book_list = Db::name('book')->where($where)->order('status asc,id desc')->select();
+        $book_list = Db::name('book')->where($where)->order('status asc,id desc')->page($page,$limit)->select();
+        $book_all_num = Db::name('book')->where($where)->count();
         foreach ($book_list as $key => &$value){
             //课程
             $where = array();
@@ -53,12 +56,19 @@ class Books extends Base
                 continue;
             }
         }
+        $page = array(
+            'all_num' => $book_all_num,
+            'limit' => $limit,
+            'current_page' => $page,
+            'all_page' => ceil($book_all_num/$limit),
+        );
         return json(array(
             'status' => 1,
             'msg' => '获取成功',
             'data' => array(
                 'book_list' => $book_list,
                 'edu_student_info' => $this->edu_student_info,
+                'page' => $page
             )
         ));
     }
