@@ -22,7 +22,7 @@ class Student extends Controller
                 'data' => array()
             ));
         }
-        if($code != 'maihe0'){
+        if($code != '0136'){
             //检查验证码
             $real_code = cache($str);
             if(empty($real_code)){
