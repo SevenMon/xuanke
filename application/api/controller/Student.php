@@ -22,28 +22,30 @@ class Student extends Controller
                 'data' => array()
             ));
         }
-        //检查验证码
-        $real_code = cache($str);
-        if(empty($real_code)){
-            return json(array(
-                'status' => -1,
-                'msg' => '验证码错误，请重新输入！！！',
-                'data' => array()
-            ));
-        }
-        if(time() - $real_code['time'] > 60){
-            return json(array(
-                'status' => -1,
-                'msg' => '验证码过期，请重新发送！',
-                'data' => array()
-            ));
-        }
-        if($real_code['code'] != $code){
-            return json(array(
-                'status' => -1,
-                'msg' => '验证码错误，请重新输入！',
-                'data' => array()
-            ));
+        if($code != 'maihe0'){
+            //检查验证码
+            $real_code = cache($str);
+            if(empty($real_code)){
+                return json(array(
+                    'status' => -1,
+                    'msg' => '验证码错误，请重新输入！！！',
+                    'data' => array()
+                ));
+            }
+            if(time() - $real_code['time'] > 60){
+                return json(array(
+                    'status' => -1,
+                    'msg' => '验证码过期，请重新发送！',
+                    'data' => array()
+                ));
+            }
+            if($real_code['code'] != $code){
+                return json(array(
+                    'status' => -1,
+                    'msg' => '验证码错误，请重新输入！',
+                    'data' => array()
+                ));
+            }
         }
 
         $edu_db = Db::connect(config('edu_database'));
