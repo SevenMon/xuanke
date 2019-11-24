@@ -395,8 +395,13 @@ class Courses extends Base
     {
         $assess = Db::name('assess')->where(array('course_id' => $id))->find();
         if($assess == null){
-            $info = Db::name('assess')->insert(array('course_id' => $id));
-            return $info;
+            try{
+                $info = Db::name('assess')->insert(array('course_id' => $id));
+                return $info;
+            }catch (Exception $e){
+                return false;
+            }
+
         }
     }
 
