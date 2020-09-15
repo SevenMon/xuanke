@@ -168,7 +168,7 @@ class Courses extends Base
         $end_time = input('end_time','');
         $start_time = strtotime($start_time);
         $end_time = strtotime($end_time);
-        if(empty($start_time) || empty($end_time) || strtotime($start_time) > strtotime($end_time)){
+        if(empty($start_time) || empty($end_time) || $start_time > $end_time){
             return json(array(
                 'status' => -1,
                 'msg' => '上课时间不合法，请重新输入',
